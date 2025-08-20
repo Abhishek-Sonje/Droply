@@ -5,13 +5,21 @@ import { useSignUp } from "@clerk/nextjs";
 import { z } from "zod";
 
 import { signUpSchema } from "@/schemas/signUpSchema";
-import { useState } from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+
+import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
 
 export default function SignUpForm() {
+  const router = useRouter();
   const [verifying, setVerifying] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null
+  );
   const { isLoaded, signUp, setActive } = useSignUp();
 
   const {
@@ -27,8 +35,16 @@ export default function SignUpForm() {
     },
   });
 
-  if (verifying) {
-    return <h1>Verification Page</h1>;
+  if (!verifying) {
+    return (
+      <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
+        <CardHeader className="flex flex-col gap-1 items-center pb-2">
+          <h1 className="text-2xl font-bold text-default-900">
+            Verify your Email
+          </h1>
+        </CardHeader>
+      </Card>
+    );
   }
 
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
@@ -58,19 +74,54 @@ export default function SignUpForm() {
       } else {
         setAuthError("An error occurred during the SignUp. Please try again");
       }
+    } finally {
+      // } catch (error: any) {
+      //   console.log("Signup Error", error);
+      //   setAuthError(
+      //     error.errors?.[0]?.message ||
+      //       "An error Occured during the SignUp.please try again"
+      //   );
+      setIsSubmitting(false);
     }
-    // } catch (error: any) {
-    //   console.log("Signup Error", error);
-    //   setAuthError(
-    //     error.errors?.[0]?.message ||
-    //       "An error Occured during the SignUp.please try again"
-    //   );
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
   };
 
-  const handleVerificationSubmit = async () => {};
+  const handleVerificationSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    if (!isLoaded || !signUp) return;
+    setIsSubmitting(true);
+    setAuthError(null);
 
-  return <h1>SignUp from with otp verificatio</h1>;
+    try {
+      const result = await signUp.attemptEmailAddressVerification({
+        code: verificationCode,
+      });
+      console.log(result);
+      if (result.status === "complete") {
+        await setActive({
+          session: result.createdSessionId,
+        });
+        router.push("/dashboard");
+      } else {
+        console.error("Verification Incomplete", result);
+        setVerificationError("Verification could not be complete!");
+      }
+    } catch (error: unknown) {
+      console.log(error);
+      if (error && typeof error === "object" && "errors" in error) {
+        const clerkError = error as { errors: Array<{ message: string }> };
+        setVerificationError(
+          clerkError.errors?.[0]?.message ||
+            "Verification could not be complete!"
+        );
+      } else {
+        setVerificationError("Verification could not be complete!");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return <h1>SignUp form with otp verificatio</h1>;
 }
