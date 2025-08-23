@@ -9,12 +9,20 @@ import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
-import { AlertCircle, Mail } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  EyeClosed,
+  Lock,
+  Mail,
+} from "lucide-react";
 
 import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/react";
+import Link from "next/link";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -25,6 +33,8 @@ export default function SignUpForm() {
   const [verificationError, setVerificationError] = useState<string | null>(
     null
   );
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { isLoaded, signUp, setActive } = useSignUp();
 
   const {
@@ -171,7 +181,7 @@ export default function SignUpForm() {
           <div className="mt-6 text-center">
             <p>Didn&#39;t receive the code? </p>
             <button
-              onClick={async (e) => {
+              onClick={async () => {
                 if (signUp) {
                   await signUp.prepareEmailAddressVerification({
                     strategy: "email_code",
@@ -223,12 +233,98 @@ export default function SignUpForm() {
               type="email"
               placeholder="your.email@example.com "
               startContent={<Mail className="h-4 w-4 text-default-500" />}
-              value={verificationCode}
               isInvalid={!!errors.email}
               errorMessage={errors.email?.message}
               {...register("email")}
               className="w-full"
             />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="password"
+              className="text-default-900 text-sm font-medium"
+            >
+              Password
+            </label>
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Your strong password"
+              startContent={<Lock className="h-4 w-4 text-default-500" />}
+              endContent={
+                <Button
+                  isIconOnly
+                  variant="light"
+                  size="sm"
+                  onClick={() => setShowPassword(!showPassword)}
+                  type="button"
+                >
+                  {showPassword ? (
+                    <EyeClosed className="h-4 w-4 text-default-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-default-500" />
+                  )}
+                </Button>
+              }
+              isInvalid={!!errors.email}
+              errorMessage={errors.email?.message}
+              {...register("email")}
+              className="w-full"
+            />
+          </div>
+
+          {/* <Button
+            type="submit"
+            color="primary"
+            className="w-full"
+            isLoading={isSubmitting}
+          >
+            {isSubmitting ? "Verifying..." : "Verify Email"}
+          </Button> */}
+
+          <div className="space-y-2">
+            <label
+              htmlFor="passwordConfirmation"
+              className="text-default-900 text-sm font-medium"
+            >
+              Confirm Password
+            </label>
+            <Input
+              id="passwordConfirmation"
+              placeholder="Confirm your password"
+              startContent={<Lock className="h-4 w-4 text-default-500" />}
+              endContent={
+                <Button
+                  isIconOnly
+                  variant="light"
+                  size="sm"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  type="button"
+                >
+                  {showConfirmPassword ? (
+                    <EyeClosed className="h-4 w-4 text-default-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-default-500" />
+                  )}
+                </Button>
+              }
+              isInvalid={!!errors.passwordConfirmation}
+              errorMessage={errors.passwordConfirmation?.message}
+              {...register("passwordConfirmation")}
+              className="w-full"
+              type={showConfirmPassword ? "text" : "password"}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
+              <p className="text-sm text-default-600">
+                By signing up, you agree to out Terms of Service and Privacy
+                Policy.
+              </p>
+            </div>
           </div>
 
           <Button
@@ -237,26 +333,22 @@ export default function SignUpForm() {
             className="w-full"
             isLoading={isSubmitting}
           >
-            {isSubmitting ? "Verifying..." : "Verify Email"}
+            {isSubmitting ? "Signing Up..." : "Sign Up"}
           </Button>
         </form>
-
-        <div className="mt-6 text-center">
-          <p>Didn&#39;t receive the code? </p>
-          <button
-            onClick={async (e) => {
-              if (signUp) {
-                await signUp.prepareEmailAddressVerification({
-                  strategy: "email_code",
-                });
-              }
-            }}
+      </CardBody>
+      <Divider />
+      <CardFooter className="flex justify-center py-4">
+        <p className="text-sm text-default-600">
+          Already have an account?{" "}
+          <Link
+            href="/sign-in"
             className="text-primary hover:underline font-medium"
           >
-            Resend Code
-          </button>
-        </div>
-      </CardBody>
+            Sign In
+          </Link>
+        </p>
+      </CardFooter>
     </Card>
   );
 }
