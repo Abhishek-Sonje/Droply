@@ -6,11 +6,21 @@ import ImageKit from "imagekit";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
+
 const imagekit = new ImageKit({
   publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "",
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY || "",
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "",
 });
+
+if (
+  !process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ||
+  !process.env.IMAGEKIT_PRIVATE_KEY ||
+  !process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT
+) {
+  throw new Error("ImageKit configuration is missing");
+}
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -93,6 +103,7 @@ export async function POST(request: NextRequest) {
       size: file.size,
 
       fileUrl: uploadResponse.url,
+      imagekitFileId:uploadResponse.fileId,
       thumbnailUrl: uploadResponse.thumbnailUrl || null,
 
       userId: userId,
