@@ -1,12 +1,14 @@
 import SignInForm from "@/components/signInForm";
-import React from "react";
+import Test from "@/components/test";
+import { CloudUpload } from "lucide-react";
+import Link from "next/link";
+// import Navbar from "@/components/Navbar";
 
-function signInPage() {
+export default function SignInPage() {
   return (
     <div>
-      <SignInForm />
+      <SignInForm/>
+      {/* <Test/> */}
     </div>
   );
 }
-
-export default signInPage;

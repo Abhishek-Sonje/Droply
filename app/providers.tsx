@@ -2,6 +2,7 @@
 
 import type { ThemeProviderProps } from "next-themes";
 import { HeroUIProvider } from "@heroui/react";
+ 
 import { ImageKitProvider } from "imagekitio-next";
 
 const authenticator = async () => {
@@ -27,7 +28,7 @@ export function Providers({ children, themeProp }: providerProps) {
       publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ""}
       urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ""}
     >
-      <HeroUIProvider>{children}</HeroUIProvider>;
+      <HeroUIProvider>{children} </HeroUIProvider>
     </ImageKitProvider>
   );
 }
