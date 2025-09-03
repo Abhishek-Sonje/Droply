@@ -1,14 +1,16 @@
+// import {SignInForm} from "@/components/signInForm";
+
 import SignInForm from "@/components/signInForm";
-import Test from "@/components/test";
-import { CloudUpload } from "lucide-react";
-import Link from "next/link";
+
+ 
+ 
+ 
 // import Navbar from "@/components/Navbar";
 
 export default function SignInPage() {
   return (
-    <div>
-      <SignInForm/>
-      {/* <Test/> */}
+    <div className="h-screen  flex justify-center items-center  bg-gradient-to-tl from-blue-950 via-slate-950 to-black">
+      <SignInForm />
     </div>
   );
 }

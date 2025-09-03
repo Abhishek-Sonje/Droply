@@ -11,7 +11,7 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
-import { Mail, Lock, AlertCircle, Eye, EyeOff, EyeClosed } from "lucide-react";
+import { Mail, Lock, AlertCircle, Eye, EyeClosed } from "lucide-react";
 import { signInSchema } from "@/schemas/signInSchema";
 
 export default function SignInForm() {
@@ -52,27 +52,29 @@ export default function SignInForm() {
         console.error("Sign-in incomplete:", result);
         setAuthError("Sign-in could not be completed. Please try again.");
       }
-    } catch (error: any) {
-      console.error("Sign-in error:", error);
-      setAuthError(
-        error.errors?.[0]?.message ||
-          "An error occurred during sign-in. Please try again."
-      );
+    } catch (error) {
+      if (error instanceof Error) {
+        setAuthError(error.message);
+      } else {
+        setAuthError("An error occurred during sign-in. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
+    <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl ">
       <CardHeader className="flex flex-col gap-1 items-center pb-2">
-        <h1 className="text-2xl font-bold text-default-900">Welcome Back</h1>
-        <p className="text-default-500 text-center">
+        <h1 className="text-2xl font-bold bg-gradient-to-tl from-blue-800  to-black bg-clip-text text-transparent">
+          Welcome Back
+        </h1>
+        <p className="  text-center  text-blue-950 opacity-50">
           Sign in to access your secure cloud storage
         </p>
       </CardHeader>
 
-      <Divider />
+      <Divider className="bg-blue-950" />
 
       <CardBody className="py-6">
         {authError && (
@@ -86,7 +88,7 @@ export default function SignInForm() {
           <div className="space-y-2">
             <label
               htmlFor="identifier"
-              className="text-sm font-medium text-default-900"
+              className="text-sm font-medium   text-blue-950"
             >
               Email
             </label>
@@ -94,7 +96,7 @@ export default function SignInForm() {
               id="identifier"
               type="email"
               placeholder="your.email@example.com"
-              startContent={<Mail className="h-4 w-4 text-default-500" />}
+              startContent={<Mail className="h-4 w-4  text-blue-950" />}
               isInvalid={!!errors.identifier}
               errorMessage={errors.identifier?.message}
               {...register("identifier")}
@@ -106,7 +108,7 @@ export default function SignInForm() {
             <div className="flex justify-between items-center">
               <label
                 htmlFor="password"
-                className="text-sm font-medium text-default-900"
+                className="text-sm font-medium text-blue-950"
               >
                 Password
               </label>
@@ -115,7 +117,7 @@ export default function SignInForm() {
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              startContent={<Lock className="h-4 w-4 text-default-500" />}
+              startContent={<Lock className="h-4 w-4   text-blue-950" />}
               endContent={
                 <Button
                   isIconOnly
@@ -125,7 +127,7 @@ export default function SignInForm() {
                   type="button"
                 >
                   {showPassword ? (
-                    <EyeClosed className="h-4 w-4 text-default-500" />
+                    <EyeClosed className="h-4 w-4   text-blue-950" />
                   ) : (
                     <Eye className="h-4 w-4 text-default-500" />
                   )}
@@ -141,7 +143,7 @@ export default function SignInForm() {
           <Button
             type="submit"
             color="primary"
-            className="w-full"
+            className="w-full bg-blue-950"
             isLoading={isSubmitting}
           >
             {isSubmitting ? "Signing in..." : "Sign In"}
@@ -149,14 +151,14 @@ export default function SignInForm() {
         </form>
       </CardBody>
 
-      <Divider />
+      <Divider className="bg-blue-950" />
 
       <CardFooter className="flex justify-center py-4">
         <p className="text-sm text-default-600">
           Don &#39; t have an account?{" "}
           <Link
             href="/sign-up"
-            className="text-primary hover:underline font-medium"
+            className=" hover:underline font-medium text-blue-950"
           >
             Sign up
           </Link>
