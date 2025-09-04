@@ -1,10 +1,7 @@
-import React from 'react'
-
+import { redirect } from "next/navigation";
 
 function Dashboard() {
-    return (
-        <h1>Hello there</h1>
-      );
+  redirect("/dashboard/files");
 }
 
 export default Dashboard;

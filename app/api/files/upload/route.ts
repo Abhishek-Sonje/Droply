@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorize" }, { status: 401 });
+      return NextResponse.json({ error: "1-Unauthorize" }, { status: 401 });
     }
 
     const formData = await request.formData();
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const parentId = (formData.get("parentId") as string) || null;
 
     if (formUserId !== userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "2-Unauthorized" }, { status: 401 });
     }
 
     if (!file) {
@@ -118,9 +118,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newFile);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to upload file" },
-      { status: 400 }
-    );
+   
+    
+    return NextResponse.json({error:error},{status:500});
   }
 }
