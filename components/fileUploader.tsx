@@ -4,46 +4,64 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
+  
   Divider,
-  form,
+  
   User,
 } from "@heroui/react";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-function FileUploader({userId}:{userId:string}) {
+type Props = {
+  userId: string;
+  parentId?: string | null;
+};
+function FileUploader({ userId, parentId = null }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleSubmit = async () => {
-    if (!selectedFile) return;
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("userId", userId);
-    console.log(formData);
+ const handleSubmit = async () => {
+   if (!selectedFile) return;
+   try {
+     const formData = new FormData();
+     formData.append("file", selectedFile);
+     formData.append("userId", userId);
+     if (parentId) formData.append("parentId", parentId);
 
-    const response = await fetch("/api/files/upload", {
-      method: "POST",
-      body: formData,
-    });
+     const response = await fetch("/api/files/upload", {
+       method: "POST",
+       body: formData,
+     });
 
-    const data = await response.json();
-    console.log(data);
+     if (!response.ok) {
+       throw new Error("Upload failed");
+     }
+
+     const data = await response.json();
+     console.log(data);
+     // Optionally notify user of success
+     alert("File uploaded successfully!");
+   } catch (error) {
+     console.error("Upload error:", error);
+     // Notify user of error
+     alert("Failed to upload file. Please try again.");
+   }
+ };
+const onDrop = (acceptedFiles: File[]) => {
+  const file = acceptedFiles[0];
+  setSelectedFile(file);
+
+  if (preview) {
+    URL.revokeObjectURL(preview); // Revoke previous URL
   }
-  const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    setSelectedFile(file);
 
-    if (file && file.type.startsWith("image/")) {
-      const objUrl = URL.createObjectURL(file);
-      setPreview(objUrl);
-    } else {
-      {
-        setPreview(null);
-      }
-    }
-  };
+  if (file && file.type.startsWith("image/")) {
+    const objUrl = URL.createObjectURL(file);
+    setPreview(objUrl);
+  } else {
+    setPreview(null);
+  }
+};
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -55,6 +73,11 @@ function FileUploader({userId}:{userId:string}) {
     },
   });
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} bytes`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
   return (
     <Card className="py-4 max-h-96 w-96 ">
       <CardBody>
@@ -79,8 +102,8 @@ function FileUploader({userId}:{userId:string}) {
             size="lg"
             fullWidth
             color="primary"
-            variant="ghost"
-            className="mx-3"
+            variant="solid"
+            className="flex-1 mr-2"
             isDisabled={!selectedFile}
             onClick={handleSubmit}
           >
@@ -89,8 +112,8 @@ function FileUploader({userId}:{userId:string}) {
           <Button
             size="lg"
             color="primary"
-            variant="ghost"
-            fullWidth
+            variant="solid"
+            className="flex-1 ml-2"
             onClick={() => {
               if (preview) {
                 URL.revokeObjectURL(preview!);
@@ -116,9 +139,8 @@ function FileUploader({userId}:{userId:string}) {
                 <div>
                   <p>
                     {selectedFile?.size
-                      ? (selectedFile?.size / 1000000).toFixed(2)
-                      : 0}{" "}
-                    mb
+                      ? formatFileSize(selectedFile.size)
+                      : "0 bytes"}
                   </p>
                   <p>{selectedFile?.type}</p>
                 </div>

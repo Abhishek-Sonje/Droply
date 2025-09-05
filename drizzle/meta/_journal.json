@@ -8,6 +8,13 @@
       "when": 1755612931072,
       "tag": "0000_empty_legion",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757084513067,
+      "tag": "0001_tan_dagger",
+      "breakpoints": true
     }
   ]
 }
