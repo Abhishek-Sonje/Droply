@@ -2,8 +2,10 @@
 
 import type { ThemeProviderProps } from "next-themes";
 import { HeroUIProvider } from "@heroui/react";
- 
+import { ToastContainer } from "react-toastify";
 import { ImageKitProvider } from "imagekitio-next";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 
 const authenticator = async () => {
   try {
@@ -22,13 +24,17 @@ export interface providerProps {
 }
 
 export function Providers({ children, themeProp }: providerProps) {
+  const [queryClient] = useState(() => new QueryClient());
   return (
-    <ImageKitProvider
-      authenticator={authenticator}
-      publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ""}
-      urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ""}
-    >
-      <HeroUIProvider>{children} </HeroUIProvider>
-    </ImageKitProvider>
+    <QueryClientProvider client={queryClient}>
+      <ImageKitProvider
+        authenticator={authenticator}
+        publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ""}
+        urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ""}
+      >
+        <HeroUIProvider>{children} </HeroUIProvider>
+        <ToastContainer />
+      </ImageKitProvider>
+    </QueryClientProvider>
   );
 }

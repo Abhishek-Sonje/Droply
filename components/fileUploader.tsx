@@ -11,6 +11,7 @@ import {
 } from "@heroui/react";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { toast } from "react-toastify";
 
 type Props = {
   userId: string;
@@ -34,17 +35,17 @@ function FileUploader({ userId, parentId = null }: Props) {
      });
 
      if (!response.ok) {
-       throw new Error("Upload failed");
+       toast.error("Upload failed");
      }
 
      const data = await response.json();
-     console.log(data);
+     
      // Optionally notify user of success
-     alert("File uploaded successfully!");
+     toast.success("File uploaded successfully!");
    } catch (error) {
      console.error("Upload error:", error);
      // Notify user of error
-     alert("Failed to upload file. Please try again.");
+     toast.error("Failed to upload file. Please try again.");
    }
  };
 const onDrop = (acceptedFiles: File[]) => {
