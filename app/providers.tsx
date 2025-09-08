@@ -1,7 +1,7 @@
 "use client";
 
 import type { ThemeProviderProps } from "next-themes";
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { ToastContainer } from "react-toastify";
 import { ImageKitProvider } from "imagekitio-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -33,6 +33,7 @@ export function Providers({ children, themeProp }: providerProps) {
         urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ""}
       >
         <HeroUIProvider>{children} </HeroUIProvider>
+        <ToastProvider/>
         <ToastContainer />
       </ImageKitProvider>
     </QueryClientProvider>

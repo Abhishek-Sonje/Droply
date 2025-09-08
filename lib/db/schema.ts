@@ -45,5 +45,5 @@ export const filesRelations = relations(files, ({ one, many }) => ({
   children: many(files),
 }));
 
-export const File = typeof files.$inferSelect;
-export const NewFile = typeof files.$inferInsert;
+export type File = typeof files.$inferSelect;
+export type NewFile = typeof files.$inferInsert;

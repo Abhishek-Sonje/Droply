@@ -1,19 +1,18 @@
-"use client"
+"use client";
 import { Tab, Tabs } from "@heroui/react";
 import React, { useState } from "react";
 
-function FileTabs({ onChange }: { onChange: (tab: string) => void }) {
-  const [selected, setSelected] = useState("files");
-
+interface FileTabsProps {
+  onTabChange: (tab: string) => void;
+  activeTab: string;
+}
+function FileTabs({ onTabChange, activeTab }: FileTabsProps) {
   return (
     <div className="flex flex-wrap gap-4">
       <Tabs
         aria-label="File Options"
-        selectedKey={selected}
-        onSelectionChange={(key) => {
-          setSelected(key as string);
-          onChange(key as string);
-        }}
+        selectedKey={activeTab}
+        onSelectionChange={(key) => onTabChange(key as string)}
       >
         <Tab key="files" title="Files" />
         <Tab key="starred" title="Starred" />

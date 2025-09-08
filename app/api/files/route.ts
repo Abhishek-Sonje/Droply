@@ -13,14 +13,14 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
-    // const queryUserId = searchParams.get("userId");
+    const queryUserId = searchParams.get("userId");
     const parentId = searchParams.get("parentId");
 
-    const filter = searchParams.get("filter") || "files";
+    // const filter = searchParams.get("filter") || "files";
 
-    // if (!queryUserId || queryUserId !== userId) {
-    //   return NextResponse.json({ error: "Unauthorize" }, { status: 401 });
-    // }
+    if (!queryUserId || queryUserId !== userId) {
+      return NextResponse.json({ error: "Unauthorize" }, { status: 401 });
+    }
 
     const condition = [eq(files.userId, userId)];
 
@@ -30,15 +30,7 @@ export async function GET(request: NextRequest) {
       condition.push(isNull(files.parentId));
     }
 
-    // Filter condition
-    if (filter === "starred") {
-      condition.push(eq(files.isStarred, true));
-    } else if (filter === "trash") {
-      condition.push(eq(files.isTrash, true));
-    } else {
-      // default: normal files, exclude trash
-      condition.push(eq(files.isTrash, false));
-    }
+    
 
     const userFiles = await db
       .select()

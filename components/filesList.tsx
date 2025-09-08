@@ -1,48 +1,63 @@
 "use client";
+import { addToast } from "@heroui/react";
+import axios from "axios";
+import { File as FileType } from "@/lib/db/schema";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import FileTabs from "./tabs";
+import { File } from "lucide-react";
 
-import React, { useState } from "react";
-import { useFiles } from "../hooks/useFiles";
-import Image from "next/image";
-interface File {
-  id: string;
-  type: string;
-  fileUrl: string;
-  name: string;
+interface fileListProps {
+  userId: string;
+  refreshTrigger?: number;
 }
-function FilesList({ filter }: { filter: string }) {
-  const { data, isLoading, error } = useFiles(filter);
+function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
+  const [files, setFiles] = useState<FileType[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  const [activeTab, setActiveTab] = useState("files");
+  const fetchFiles = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`/api/files?userId=${userId}`);
+      setFiles(response.data);
+      console.log("Files:", response.data);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+      addToast({
+        title: "Error fetching files",
+        description: "An error occurred while fetching files.",
+        color: "danger",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchFiles();
+  }, [userId, refreshTrigger, fetchFiles]);
+
+  const filterFiles = useMemo(() => {
+    switch (activeTab) {
+      case "starred":
+        return files.filter((file) => file.isStarred && !file.isTrash);
+      case "trash":
+        return files.filter((file) => file.isTrash);
+      case "files":
+        return files.filter((file) => !file.isTrash);
+    }
+  }, [files, activeTab]);
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-4 bg-gray-400">
-      {data.map((file: File) => (
-        <div key={file.id} className="border rounded p-2 bg-white shadow">
-          {file.type.startsWith("image/") ? (
-            <Image
-              src={file.fileUrl}
-              alt={file.name}
-              width={200}
-              height={200}
-              className="h-32 w-full object-cover"
-            />
-          ) : file.type === "application/pdf" ? (
-            <Image
-              src="/pdf.png"
-              alt="PDF"
-              width={200}
-              height={200}
-              className="h-32 w-full object-cover"
-            />
-          ) : (
-            <div className="h-32 flex items-center justify-center bg-gray-200">
-              ❓
-            </div>
-          )}
-          <p className="mt-2 text-sm truncate">{file.name}</p>
-        </div>
-      ))}
+    <div>
+      <FileTabs
+        onTabChange={(tab) => setActiveTab(tab)}
+        activeTab={activeTab}
+      />
+      <div className="gap-2 grid">
+         
+      </div>
     </div>
   );
 }
