@@ -9,8 +9,8 @@ async function FilePage ()  {
     if (!userId) return <p>Unauthorized</p>;
     return (
       // <h1>hello</h1>
-      <div className="flex justify-center items-center h-screen bg-black">
-        {/* <FileUploader userId={userId} /> */}
+      <div className="flex justify-center items-center gap-4 h-screen bg-slate-950 ">
+        <FileUploader userId={userId}  />
         <FilesList userId={userId} />
       </div>
     );

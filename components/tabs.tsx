@@ -8,16 +8,23 @@ interface FileTabsProps {
 }
 function FileTabs({ onTabChange, activeTab }: FileTabsProps) {
   return (
-    <div className="flex flex-wrap gap-4">
-      <Tabs
-        aria-label="File Options"
-        selectedKey={activeTab}
-        onSelectionChange={(key) => onTabChange(key as string)}
-      >
-        <Tab key="files" title="Files" />
-        <Tab key="starred" title="Starred" />
-        <Tab key="trash" title="Trash" />
-      </Tabs>
+    <div className="flex justify-center">
+      <div className="my-4 gap-2 w-md">
+        <Tabs
+          aria-label="File Options"
+          selectedKey={activeTab}
+          radius="full"
+          fullWidth
+          variant="solid"
+          color="primary"
+          size="md"
+          onSelectionChange={(key) => onTabChange(key as string)}
+        >
+          <Tab key="files" title="Files" />
+          <Tab key="starred" title="Starred" />
+          <Tab key="trash" title="Trash" />
+        </Tabs>
+      </div>
     </div>
   );
 }

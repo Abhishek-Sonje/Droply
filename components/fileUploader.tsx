@@ -4,9 +4,8 @@ import {
   Button,
   Card,
   CardBody,
-  
+  CardFooter,
   Divider,
-  
   User,
 } from "@heroui/react";
 import React, { useState } from "react";
@@ -21,48 +20,48 @@ function FileUploader({ userId, parentId = null }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
- const handleSubmit = async () => {
-   if (!selectedFile) return;
-   try {
-     const formData = new FormData();
-     formData.append("file", selectedFile);
-     formData.append("userId", userId);
-     if (parentId) formData.append("parentId", parentId);
+  const handleSubmit = async () => {
+    if (!selectedFile) return;
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("userId", userId);
+      if (parentId) formData.append("parentId", parentId);
 
-     const response = await fetch("/api/files/upload", {
-       method: "POST",
-       body: formData,
-     });
+      const response = await fetch("/api/files/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-     if (!response.ok) {
-       toast.error("Upload failed");
-     }
+      if (!response.ok) {
+        toast.error("Upload failed");
+      }
 
-     const data = await response.json();
-     
-     // Optionally notify user of success
-     toast.success("File uploaded successfully!");
-   } catch (error) {
-     console.error("Upload error:", error);
-     // Notify user of error
-     toast.error("Failed to upload file. Please try again.");
-   }
- };
-const onDrop = (acceptedFiles: File[]) => {
-  const file = acceptedFiles[0];
-  setSelectedFile(file);
+      const data = await response.json();
 
-  if (preview) {
-    URL.revokeObjectURL(preview); // Revoke previous URL
-  }
+      // Optionally notify user of success
+      toast.success("File uploaded successfully!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      // Notify user of error
+      toast.error("Failed to upload file. Please try again.");
+    }
+  };
+  const onDrop = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    setSelectedFile(file);
 
-  if (file && file.type.startsWith("image/")) {
-    const objUrl = URL.createObjectURL(file);
-    setPreview(objUrl);
-  } else {
-    setPreview(null);
-  }
-};
+    if (preview) {
+      URL.revokeObjectURL(preview); // Revoke previous URL
+    }
+
+    if (file && file.type.startsWith("image/")) {
+      const objUrl = URL.createObjectURL(file);
+      setPreview(objUrl);
+    } else {
+      setPreview(null);
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -80,7 +79,7 @@ const onDrop = (acceptedFiles: File[]) => {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
   return (
-    <Card className="py-4 max-h-96 w-96 ">
+    <Card className="py-4   w-md  ">
       <CardBody>
         <div
           {...getRootProps()}
@@ -151,6 +150,19 @@ const onDrop = (acceptedFiles: File[]) => {
           </div>
         )}
       </CardBody>
+      <Divider />
+      <CardFooter>
+        
+          <ul className="list-disc list-inside text-sm text-gray-400 space-y-1">
+            <li>Allowed types → Images (JPG, PNG), PDFs, and Docs only.</li>
+            <li>Max size → 10 MB per file.</li>
+            <li>
+              Naming → Use clear names (no special characters like #, $, %).
+            </li>
+            <li>Safe content → No harmful, copyrighted, or illegal files.</li>
+          </ul>
+        
+      </CardFooter>
     </Card>
   );
 }

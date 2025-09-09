@@ -1,4 +1,6 @@
-import { heroui } from "@heroui/react"
+import { heroui } from "@heroui/react";
+import scrollbar from "tailwind-scrollbar"
+ 
 
 module.exports = {
   content: [
@@ -10,5 +12,7 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [heroui()],
+  plugins: [heroui(), scrollbar({ nocompatible: true })],
 };
+
+// @plugin 'tailwind-scrollbar';

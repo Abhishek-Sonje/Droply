@@ -31,7 +31,7 @@ export async function DELETE(request: NextRequest) {
     const trashFiles = await db
       .select({ imagekitFileId: files.imagekitFileId })
       .from(files)
-      .where(and(eq(files.isTrash, true), eq(files.userId, userId)));
+      .where(and(eq(files.userId, userId), eq(files.isTrash, true)));
 
     if (trashFiles.length === 0) {
       return NextResponse.json({ error: "Files not found" }, { status: 404 });
@@ -50,14 +50,15 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Perform deletions in a transaction
-    await db.transaction(async (tx) => {
-      // Delete files from ImageKit
-      await imagekit.bulkDeleteFiles(imagekitIds);
-      // Delete files from database
-      await tx
-        .delete(files)
-        .where(and(eq(files.isTrash, true), eq(files.userId, userId)));
-    });
+
+    // Delete files from ImageKit
+    // console.log("Deleting these ImageKit IDs:", imagekitIds);
+
+    await imagekit.bulkDeleteFiles(imagekitIds);
+    // Delete files from database
+    await db
+      .delete(files)
+      .where(and(eq(files.isTrash, true), eq(files.userId, userId)));
 
     return NextResponse.json(
       { message: "Files deleted successfully" },
