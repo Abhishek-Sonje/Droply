@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import FileCard from "./fileCard";
 import Link from "next/link";
+import LoadingSpinner from "./loading";
 
 interface fileListProps {
   userId: string;
@@ -135,7 +136,7 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
   };
   const handleEmptyTrash = async () => {
     try {
-      console.log("Emptying trash");  
+      console.log("Emptying trash");
       await axios.delete(`/api/files/empty-trash`);
 
       setFiles(files.filter((file) => !file.isTrash));
@@ -154,9 +155,11 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
       });
     }
   };
+
   return (
     <div className="flex">
-      <div className="bg-blue-950 w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-y-auto scrollbar-hide ">
+      <div className="bg-blue-950 w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-hidden border-b-blue-950 border-b-8 border-radius-2xl">
+        {loading && <LoadingSpinner />}
         <div className="sticky top-0 z-100 bg-blue-950 flex justify-center gap-3 align-center items-center">
           {" "}
           <FileTabs
@@ -164,26 +167,28 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
             activeTab={activeTab}
           />
           {activeTab === "trash" && (
-            <Button color="danger" isIconOnly onClick={() => handleEmptyTrash()}>
+            <Button
+              color="danger"
+              isIconOnly
+              onClick={() => handleEmptyTrash()}
+            >
               <Trash2 />
             </Button>
           )}
         </div>
 
         {filterFiles && filterFiles.length > 0 ? (
-          <ScrollShadow hideScrollBar>
-            <div className="gap-2 grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-4  ">
-              {filterFiles.map((item) => (
-                <FileCard
-                  key={item.id}
-                  item={item}
-                  handleOpen={() => handleOpen(item.fileUrl)}
-                  handleStar={() => handleStar(item.id)}
-                  handleTrash={() => handleTrash(item.id)}
-                />
-              ))}
-            </div>
-          </ScrollShadow>
+          <div className="gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  max-h-full overflow-y-auto scrollbar-hide pb-20  ">
+            {filterFiles.map((item) => (
+              <FileCard
+                key={item.id}
+                item={item}
+                handleOpen={() => handleOpen(item.fileUrl)}
+                handleStar={() => handleStar(item.id)}
+                handleTrash={() => handleTrash(item.id)}
+              />
+            ))}
+          </div>
         ) : (
           <div className="flex justify-center items-center h-full">
             <FolderSearch size={100} color="white" />

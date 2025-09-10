@@ -107,11 +107,11 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
   };
 
   return (
-    <Card shadow="sm" className="p-1 w-full bg-white min-h-[200px]">
-      <CardBody className="p-0 flex justify-center" onClick={handleOpen}>
+    <Card shadow="sm" className="p-1 w-full bg-white min-h-[100px] max-h-[250px]">
+      <CardBody className="p-0 flex justify-center overflow-hidden rounded-lg" onClick={handleOpen}>
         <Image
           alt={item.name}
-          className="w-full object-cover hover:cursor-pointer"
+          className="w-full object-cover overflow-hidden hover:cursor-pointer  "
           radius="lg"
           shadow="sm"
           src={item.type.startsWith("image/") ? item.fileUrl : "/pdf.png"}

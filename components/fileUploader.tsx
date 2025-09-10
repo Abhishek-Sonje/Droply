@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  addToast,
   Button,
   Card,
   CardBody,
@@ -8,43 +9,55 @@ import {
   Divider,
   User,
 } from "@heroui/react";
+import axios from "axios";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
+import { set } from "zod";
+import LoadingSpinner from "./loading";
 
 type Props = {
   userId: string;
   parentId?: string | null;
+  setRefreshTrigger?: React.Dispatch<React.SetStateAction<number>>;
 };
-function FileUploader({ userId, parentId = null }: Props) {
+function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setloading] = useState(false);
 
   const handleSubmit = async () => {
     if (!selectedFile) return;
+    setloading(true);
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("userId", userId);
       if (parentId) formData.append("parentId", parentId);
 
-      const response = await fetch("/api/files/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await axios.post("/api/files/upload", formData);
 
-      if (!response.ok) {
-        toast.error("Upload failed");
+      if (response.status === 201 || response.status === 200) {
+        if (setRefreshTrigger) {
+          setRefreshTrigger((prev) => prev + 1);
+        }
+        setPreview(null);
+        addToast({
+          title: "File uploaded succesfully!",
+          description: `${response.data.name} uploaded successfully.`,
+          color: "success",
+        });
       }
-
-      const data = await response.json();
-
-      // Optionally notify user of success
-      toast.success("File uploaded successfully!");
     } catch (error) {
       console.error("Upload error:", error);
       // Notify user of error
-      toast.error("Failed to upload file. Please try again.");
+      addToast({
+        title: "Failed to upload file.",
+        description: `Failed to upload ${selectedFile.name}, Please try again.`,
+        color: "danger",
+      });
+    } finally {
+      setloading(false);
     }
   };
   const onDrop = (acceptedFiles: File[]) => {
@@ -79,14 +92,16 @@ function FileUploader({ userId, parentId = null }: Props) {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
   return (
-    <Card className="py-4   w-md  ">
+    <Card className="py-4 w-md" isDisabled={loading}>
       <CardBody>
         <div
           {...getRootProps()}
           className="border-2 border-gray-400 rounded-2xl h-40 mb-1   text-center items-center justify-center flex cursor-pointer"
         >
           <input {...getInputProps()} />
-          {isDragActive ? (
+          {loading ? (
+            <LoadingSpinner />
+          ) : isDragActive ? (
             <p>Drop the file here ...</p>
           ) : (
             <p>
@@ -152,16 +167,14 @@ function FileUploader({ userId, parentId = null }: Props) {
       </CardBody>
       <Divider />
       <CardFooter>
-        
-          <ul className="list-disc list-inside text-sm text-gray-400 space-y-1">
-            <li>Allowed types → Images (JPG, PNG), PDFs, and Docs only.</li>
-            <li>Max size → 10 MB per file.</li>
-            <li>
-              Naming → Use clear names (no special characters like #, $, %).
-            </li>
-            <li>Safe content → No harmful, copyrighted, or illegal files.</li>
-          </ul>
-        
+        <ul className="list-disc list-inside text-sm text-gray-400 space-y-1">
+          <li>Allowed types → Images (JPG, PNG), PDFs, and Docs only.</li>
+          <li>Max size → 10 MB per file.</li>
+          <li>
+            Naming → Use clear names (no special characters like #, $, %).
+          </li>
+          <li>Safe content → No harmful, copyrighted, or illegal files.</li>
+        </ul>
       </CardFooter>
     </Card>
   );

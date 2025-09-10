@@ -13,6 +13,7 @@
     "db:migrate": "tsx ./lib/db/migrate.ts"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.46.2",
     "@clerk/nextjs": "^6.31.3",
     "@heroui/react": "^2.8.3",
     "@hookform/resolvers": "^5.2.1",
