@@ -1,32 +1,13 @@
 "use client";
-import {
-  addToast,
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  Divider,
-  Image,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  ScrollShadow,
-} from "@heroui/react";
+import { addToast, Button } from "@heroui/react";
 import axios from "axios";
 import { File as FileType } from "@/lib/db/schema";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+
 import FileTabs from "./tabs";
-import {
-  Download,
-  File,
-  FolderSearch,
-  Star,
-  Trash,
-  Trash2,
-} from "lucide-react";
+import { FolderSearch, Trash2 } from "lucide-react";
 import FileCard from "./fileCard";
-import Link from "next/link";
+
 import LoadingSpinner from "./loading";
 
 interface fileListProps {
@@ -36,7 +17,6 @@ interface fileListProps {
 function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
   const [files, setFiles] = useState<FileType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState("files");
   const fetchFiles = useCallback(async () => {
@@ -158,9 +138,9 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
 
   return (
     <div className="flex">
-      <div className="bg-blue-950 w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-hidden border-b-blue-950 border-b-8 border-radius-2xl">
+      <div className="bg-[#0F1B0F] w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-hidden  shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-b-8 border-[#0F1B0F]">
         {loading && <LoadingSpinner />}
-        <div className="sticky top-0 z-100 bg-blue-950 flex justify-center gap-3 align-center items-center">
+        <div className="sticky top-0 z-100 flex justify-center gap-3 align-center items-center">
           {" "}
           <FileTabs
             onTabChange={(tab) => setActiveTab(tab)}

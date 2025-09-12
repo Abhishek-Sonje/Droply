@@ -107,8 +107,14 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
   };
 
   return (
-    <Card shadow="sm" className="p-1 w-full bg-white min-h-[100px] max-h-[250px]">
-      <CardBody className="p-0 flex justify-center overflow-hidden rounded-lg" onClick={handleOpen}>
+    <Card
+      shadow="sm"
+      className="p-1 w-full bg-[#4B5563] min-h-[100px] max-h-[250px] rounded-2xl "
+    >
+      <CardBody
+        className="p-0 flex justify-center overflow-hidden rounded-lg border-3 border-[#0F1B0F] bg-white "
+        onClick={handleOpen}
+      >
         <Image
           alt={item.name}
           className="w-full object-cover overflow-hidden hover:cursor-pointer  "
@@ -119,17 +125,18 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
           loading="lazy" // Lazy load images
         />
       </CardBody>
-      <b className="text-default-800 pt-2 px-2">
+      <Divider className="mt-4 " />
+      <b className="text-800 pt-2 px-2 text-[#ffffff]">
         {item.name.split(".")[0].length > 20
           ? item.name.split(".")[0].slice(0, 10) + "..."
           : item.name.split(".")[0]}
       </b>
-      <Divider />
+      {/* <Divider className="m-3"/> */}
       <CardFooter className="flex justify-evenly">
         <Button
           isIconOnly
           size="sm"
-          className="bg-slate-950 text-white"
+          className="bg-[#0F1B0F] text-[#d9d4c7] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
           onClick={handleStar}
         >
           {item.isStarred ? (
@@ -139,14 +146,19 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
           )}
         </Button>
         <Button
-          className="bg-slate-950 text-white"
+          className="bg-[#0F1B0F] text-[#e6e3dd] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
           isIconOnly
           size="sm"
           onClick={() => handleDownload(item.fileUrl, item.name)}
         >
           <Download size={19} />
         </Button>
-        <Button isIconOnly size="sm" onClick={handleTrash} className="bg-slate-950 text-white">
+        <Button
+          isIconOnly
+          size="sm"
+          onClick={handleTrash}
+          className="bg-[#0F1B0F] text-[#d9d4c7] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
+        >
           <Trash size={19} />
         </Button>
         {/* Popover triggered by Info icon */}
@@ -168,7 +180,7 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
               size="sm"
               onMouseEnter={debouncedOpen}
               onMouseLeave={debouncedClose}
-              className="bg-slate-950 text-white"
+              className="bg-[#0F1B0F] text-[#d9d4c7] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
             >
               <Info size={19} />
             </Button>

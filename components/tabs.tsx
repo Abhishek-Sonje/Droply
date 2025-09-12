@@ -1,6 +1,6 @@
 "use client";
 import { Tab, Tabs } from "@heroui/react";
-import React, { useState } from "react";
+ 
 
 interface FileTabsProps {
   onTabChange: (tab: string) => void;
@@ -16,8 +16,14 @@ function FileTabs({ onTabChange, activeTab }: FileTabsProps) {
           radius="full"
           fullWidth
           variant="solid"
-          color="primary"
+          color={"primary"}
           size="md"
+          classNames={{
+            tabWrapper: "bg-slate-950",
+            tabContent: "text-[#ffffff] font-semibold text-[15px] ",
+            // base: "bg-[#4B5563]",
+            tabList:"bg-[#4B5563]",
+          }}
           onSelectionChange={(key) => onTabChange(key as string)}
         >
           <Tab key="files" title="Files" />

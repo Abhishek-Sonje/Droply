@@ -1,19 +1,18 @@
-import FileUploader from "@/components/fileUploader";
 import React from "react";
 import { auth } from "@clerk/nextjs/server";
-// import UserFiles from "@/components/userFiles";
-import FilesList from "@/components/filesList";
 
-async function FilePage ()  {
+import DashboardContent from "@/components/dashboardContent";
+import NavbarPage from "@/components/Navbar";
+
+async function FilePage() {
   const { userId } = await auth();
-    if (!userId) return <p>Unauthorized</p>;
-    return (
-      // <h1>hello</h1>
-      <div className="flex justify-center items-center gap-4 h-screen bg-slate-950 ">
-        <FileUploader userId={userId}  />
-        <FilesList userId={userId} />
-      </div>
-    );
+  if (!userId) return <p>Unauthorized</p>;
+  return (
+    <div className="flex flex-col h-screen bg-gradient-to-br from-[#EAE7DD] via-[#D9D4C7] to-[#F5F5F0] p-2">
+      <NavbarPage />
+      <DashboardContent />
+    </div>
+  );
 }
 
 export default FilePage;

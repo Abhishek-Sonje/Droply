@@ -10,25 +10,33 @@ import {
   User,
 } from "@heroui/react";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { set } from "zod";
 import LoadingSpinner from "./loading";
+import { on } from "events";
 
 type Props = {
   userId: string;
   parentId?: string | null;
-  setRefreshTrigger?: React.Dispatch<React.SetStateAction<number>>;
+  onUploadComplete: () => void;
 };
-function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
+function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
   const handleSubmit = async () => {
     if (!selectedFile) return;
-    setloading(true);
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
@@ -38,9 +46,9 @@ function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
       const response = await axios.post("/api/files/upload", formData);
 
       if (response.status === 201 || response.status === 200) {
-        if (setRefreshTrigger) {
-          setRefreshTrigger((prev) => prev + 1);
-        }
+        console.log("on upload complete type....", typeof onUploadComplete);
+        onUploadComplete?.();
+        setSelectedFile(null);
         setPreview(null);
         addToast({
           title: "File uploaded succesfully!",
@@ -57,11 +65,20 @@ function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
         color: "danger",
       });
     } finally {
-      setloading(false);
+      setLoading(false);
     }
   };
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
+    const maxSize = 10 * 1024 * 1024; // 10 MB in bytes
+    if (file.size > maxSize) {
+      addToast({
+        title: "File too large",
+        description: "File size exceeds 10 MB limit.",
+        color: "danger",
+      });
+      return;
+    }
     setSelectedFile(file);
 
     if (preview) {
@@ -92,11 +109,14 @@ function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
   return (
-    <Card className="py-4 w-md" isDisabled={loading}>
+    <Card
+      className="py-4 w-md bg-[#0f1B0F] text-gray-300 border-dashed border-2 border-[#D7FF3F]  "
+      isDisabled={loading}
+    >
       <CardBody>
         <div
           {...getRootProps()}
-          className="border-2 border-gray-400 rounded-2xl h-40 mb-1   text-center items-center justify-center flex cursor-pointer"
+          className="border-2 border-[#d7ff3f] rounded-2xl h-40 mb-1 text-center items-center justify-center flex cursor-pointer"
         >
           <input {...getInputProps()} />
           {loading ? (
@@ -116,9 +136,9 @@ function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
           <Button
             size="lg"
             fullWidth
-            color="primary"
+            // color="primary"
             variant="solid"
-            className="flex-1 mr-2"
+            className="flex-1 mr-2 bg-[#D7FF3F]"
             isDisabled={!selectedFile}
             onClick={handleSubmit}
           >
@@ -126,9 +146,9 @@ function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
           </Button>
           <Button
             size="lg"
-            color="primary"
+            // color="primary"
             variant="solid"
-            className="flex-1 ml-2"
+            className="flex-1 ml-2 bg-[#D7FF3F]"
             onClick={() => {
               if (preview) {
                 URL.revokeObjectURL(preview!);
@@ -167,7 +187,7 @@ function FileUploader({ userId, parentId = null, setRefreshTrigger }: Props) {
       </CardBody>
       <Divider />
       <CardFooter>
-        <ul className="list-disc list-inside text-sm text-gray-400 space-y-1">
+        <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
           <li>Allowed types → Images (JPG, PNG), PDFs, and Docs only.</li>
           <li>Max size → 10 MB per file.</li>
           <li>

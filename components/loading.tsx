@@ -5,11 +5,12 @@ function LoadingSpinner() {
     <div className="flex items-center justify-center  h-full text-white">
       {" "}
       <Spinner
-        classNames={{ label: "text-white mt-4" }}
-        label="fetching files"
+        classNames={{ label: "text-white mt-4  " }}
+        label="Uploading "
         color="white"
-        variant="simple"
-        labelColor="primary"
+        className=""
+        // variant="simple"
+        // labelColor="primary"
         size="lg"
       />
     </div>
