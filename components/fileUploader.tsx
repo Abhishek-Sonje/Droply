@@ -120,7 +120,7 @@ function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
         >
           <input {...getInputProps()} />
           {loading ? (
-            <LoadingSpinner />
+            <LoadingSpinner label="Uploading..." />
           ) : isDragActive ? (
             <p>Drop the file here ...</p>
           ) : (

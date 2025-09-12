@@ -1,12 +1,12 @@
 import { Spinner } from "@heroui/react";
 import React from "react";
-function LoadingSpinner() {
+function LoadingSpinner({ label }: { label: string }) {
   return (
     <div className="flex items-center justify-center  h-full text-white">
       {" "}
       <Spinner
         classNames={{ label: "text-white mt-4  " }}
-        label="Uploading "
+        label={label}
         color="white"
         className=""
         // variant="simple"

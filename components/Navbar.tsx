@@ -19,7 +19,7 @@ import {
 import Link from "next/link";
 import { CloudUpload, Files, User } from "lucide-react";
 
-function NavbarPage() {
+function NavbarPage({ activeTab }: { activeTab: string }) {
   const { signOut } = useClerk();
   const { isLoaded, isSignedIn, user } = useUser();
   return (
@@ -40,22 +40,24 @@ function NavbarPage() {
           "data-[active=true]:after:left-0",
           "data-[active=true]:after:right-0",
           "data-[active=true]:after:h-[2px]",
-          // "data-[active=true]:after:rounded-[2px]",
+          "data-[active=true]:after:rounded-[2px]",
           "data-[active=true]:after:bg-white",
         ],
       }}
     >
-      <NavbarBrand>
+      <NavbarBrand className="cursor-pointer">
         {/* <Image
           src="/DroplyLogo.png"
           width={50}
           height={50}
           alt="Picture of the author"
         /> */}
-        <CloudUpload className="text-[#efebe3] size-9" />
+        <Link href="/" className="text-xl font-bold">
+          <CloudUpload className="text-[#efebe3] size-9" />
+        </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-6" justify="center">
-        <NavbarItem isActive>
+        <NavbarItem isActive={activeTab==="files"}>
           <Link
             color="foreground"
             className="font-bold text-sky-100 gap-2 flex  hover:underline"
@@ -65,7 +67,7 @@ function NavbarPage() {
             Files
           </Link>
         </NavbarItem>
-        <NavbarItem className="overflow-hidden">
+        <NavbarItem className="overflow-hidden" isActive={activeTab==="profile"}>
           <Link
             color="foreground"
             className="font-bold  text-sky-100  gap-1.5 flex  hover:underline "

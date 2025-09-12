@@ -139,7 +139,7 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
   return (
     <div className="flex">
       <div className="bg-[#0F1B0F] w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-hidden  shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-b-8 border-[#0F1B0F]">
-        {loading && <LoadingSpinner />}
+        {loading && <LoadingSpinner label="Loading Files" />}
         <div className="sticky top-0 z-100 flex justify-center gap-3 align-center items-center">
           {" "}
           <FileTabs
