@@ -110,17 +110,17 @@ function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
   };
   return (
     <Card
-      className="py-4 w-md bg-[#0f1B0F] text-gray-300 border-dashed border-2 border-[#D7FF3F]  "
+      className="py-4 w-md bg-[#F5EEDD] text-[#06202B]     "
       isDisabled={loading}
     >
       <CardBody>
         <div
           {...getRootProps()}
-          className="border-2 border-[#d7ff3f] rounded-2xl h-40 mb-1 text-center items-center justify-center flex cursor-pointer"
+          className={`border-2  rounded-2xl h-40 mb-1 text-center text-lg  items-center justify-center flex cursor-pointer ${isDragActive ? "border-[#7AE2CF]" : "border-[#077A7D]"}`}
         >
           <input {...getInputProps()} />
           {loading ? (
-            <LoadingSpinner label="Uploading..." />
+            <LoadingSpinner label="Uploading..." color="#06202B" />
           ) : isDragActive ? (
             <p>Drop the file here ...</p>
           ) : (
@@ -138,7 +138,7 @@ function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
             fullWidth
             // color="primary"
             variant="solid"
-            className="flex-1 mr-2 bg-[#D7FF3F]"
+            className="flex-1 mr-2 bg-[#077A7D] text-[#F5EEDD] font-semibold hover:bg-[#7AE2CF] hover:text-[#06202B] hover:shadow-md/100  shadow-[#06202B]"
             isDisabled={!selectedFile}
             onClick={handleSubmit}
           >
@@ -148,7 +148,7 @@ function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
             size="lg"
             // color="primary"
             variant="solid"
-            className="flex-1 ml-2 bg-[#D7FF3F]"
+            className="flex-1 ml-2 bg-[#077A7D] text-[#F5EEDD] font-semibold hover:bg-[#7AE2CF] hover:text-[#06202B] hover:shadow-md/100  shadow-[#06202B]"
             onClick={() => {
               if (preview) {
                 URL.revokeObjectURL(preview!);
@@ -171,7 +171,7 @@ function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
                 radius: "sm", // Changed from default "full" to make it rectangular
               }}
               description={
-                <div>
+                <div className="text-[#08232e8c]">
                   <p>
                     {selectedFile?.size
                       ? formatFileSize(selectedFile.size)
@@ -187,7 +187,7 @@ function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
       </CardBody>
       <Divider />
       <CardFooter>
-        <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+        <ul className="list-disc list-inside text-sm text-[#06202B] space-y-1">
           <li>Allowed types → Images (JPG, PNG), PDFs, and Docs only.</li>
           <li>Max size → 10 MB per file.</li>
           <li>

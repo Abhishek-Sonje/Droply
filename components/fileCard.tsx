@@ -108,16 +108,16 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
 
   return (
     <Card
-      shadow="sm"
-      className="p-1 w-full bg-[#4B5563] min-h-[100px] max-h-[250px] rounded-2xl "
+      shadow="md"
+      className="p-1 pt-2 w-full bg-[#06202B] min-h-[100px] max-h-[250px] rounded-2xl  border-2 border-[#7Ae3cf]  "
     >
       <CardBody
-        className="p-0 flex justify-center overflow-hidden rounded-lg border-3 border-[#0F1B0F] bg-white "
+        className="p-0  flex justify-center overflow-hidden rounded-2xl bg-white "
         onClick={handleOpen}
       >
         <Image
           alt={item.name}
-          className="w-full object-cover overflow-hidden hover:cursor-pointer  "
+          className="w-full object-cover overflow-hidden  hover:cursor-pointer  "
           radius="lg"
           shadow="sm"
           src={item.type.startsWith("image/") ? item.fileUrl : "/pdf.png"}
@@ -125,7 +125,7 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
           loading="lazy" // Lazy load images
         />
       </CardBody>
-      <Divider className="mt-4 " />
+      <Divider className="mt-4 bg-[#07797dab]" />
       <b className="text-800 pt-2 px-2 text-[#ffffff]">
         {item.name.split(".")[0].length > 20
           ? item.name.split(".")[0].slice(0, 10) + "..."
@@ -136,7 +136,7 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
         <Button
           isIconOnly
           size="sm"
-          className="bg-[#0F1B0F] text-[#d9d4c7] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
+          className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
           onClick={handleStar}
         >
           {item.isStarred ? (
@@ -146,7 +146,7 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
           )}
         </Button>
         <Button
-          className="bg-[#0F1B0F] text-[#e6e3dd] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
+          className="bg-[#0F1B0F]  text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
           isIconOnly
           size="sm"
           onClick={() => handleDownload(item.fileUrl, item.name)}
@@ -157,7 +157,7 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
           isIconOnly
           size="sm"
           onClick={handleTrash}
-          className="bg-[#0F1B0F] text-[#d9d4c7] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
+          className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
         >
           <Trash size={19} />
         </Button>
@@ -180,7 +180,8 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
               size="sm"
               onMouseEnter={debouncedOpen}
               onMouseLeave={debouncedClose}
-              className="bg-[#0F1B0F] text-[#d9d4c7] hover:bg-[#D7FF3F] hover:text-[#0F1B0F]"
+              
+              className="bg-[#0F1B0F]  text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
             >
               <Info size={19} />
             </Button>

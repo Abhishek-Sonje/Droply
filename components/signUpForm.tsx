@@ -113,15 +113,15 @@ export default function SignUpForm() {
     return (
       <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
         <CardHeader className="flex flex-col gap-1 items-center pb-2">
-          <h1 className="text-2xl font-bold bg-gradient-to-tl from-blue-800 to-black bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-tl from-[#077a7d] to-[#06202B] bg-clip-text text-transparent">
             Verify Your Email
           </h1>
-          <p className="text-center text-blue-950 opacity-50">
+          <p className="text-center text-[#06202b] opacity-50">
             We&apos;ve sent a verification code to your email
           </p>
         </CardHeader>
 
-        <Divider className="bg-blue-950" />
+        <Divider className="bg-[#06202b]" />
 
         <CardBody className="py-6">
           {verificationError && (
@@ -135,7 +135,7 @@ export default function SignUpForm() {
             <div className="space-y-2">
               <label
                 htmlFor="verificationCode"
-                className="text-sm font-medium text-blue-950"
+                className="text-sm font-medium text-[#06202b]"
               >
                 Verification Code
               </label>
@@ -153,7 +153,7 @@ export default function SignUpForm() {
             <Button
               type="submit"
               color="primary"
-              className="w-full bg-blue-950"
+              className="w-full bg-[#06202b]"
               isLoading={isSubmitting}
             >
               {isSubmitting ? "Verifying..." : "Verify Email"}
@@ -161,7 +161,7 @@ export default function SignUpForm() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-blue-950 opacity-50">
+            <p className="text-sm text-[#06202b] opacity-50">
               Didn&apos;t receive a code?{" "}
               <button
                 onClick={async () => {
@@ -171,7 +171,7 @@ export default function SignUpForm() {
                     });
                   }
                 }}
-                className="text-blue-950 hover:underline font-medium"
+                className="text-[#06202b] hover:underline font-medium"
               >
                 Resend code
               </button>
@@ -185,15 +185,15 @@ export default function SignUpForm() {
   return (
     <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
       <CardHeader className="flex flex-col gap-1 items-center pb-2">
-        <h1 className="text-2xl font-bold bg-gradient-to-tl from-blue-800 to-black bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold bg-gradient-to-tl   from-[#077a7d] to-black bg-clip-text text-transparent">
           Create Your Account
         </h1>
-        <p className="text-center text-blue-950 opacity-50">
+        <p className="text-center text-[#06202b] opacity-50">
           Sign up to start managing your images securely
         </p>
       </CardHeader>
 
-      <Divider className="bg-blue-950" />
+      <Divider className="bg-[#06202b]" />
 
       <CardBody className="py-6">
         {authError && (
@@ -207,7 +207,7 @@ export default function SignUpForm() {
           <div className="space-y-2">
             <label
               htmlFor="email"
-              className="text-sm font-medium text-blue-950"
+              className="text-sm font-medium text-[#06202b]"
             >
               Email
             </label>
@@ -215,7 +215,7 @@ export default function SignUpForm() {
               id="email"
               type="email"
               placeholder="your.email@example.com"
-              startContent={<Mail className="h-4 w-4 text-blue-950" />}
+              startContent={<Mail className="h-4 w-4 text-[#06202b]" />}
               isInvalid={!!errors.email}
               errorMessage={errors.email?.message}
               {...register("email")}
@@ -226,7 +226,7 @@ export default function SignUpForm() {
           <div className="space-y-2">
             <label
               htmlFor="password"
-              className="text-sm font-medium text-blue-950"
+              className="text-sm font-medium text-[#06202b]"
             >
               Password
             </label>
@@ -234,7 +234,7 @@ export default function SignUpForm() {
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              startContent={<Lock className="h-4 w-4 text-blue-950" />}
+              startContent={<Lock className="h-4 w-4 text-[#06202b]" />}
               endContent={
                 <Button
                   isIconOnly
@@ -244,7 +244,7 @@ export default function SignUpForm() {
                   type="button"
                 >
                   {showPassword ? (
-                    <EyeClosed className="h-4 w-4 text-blue-950" />
+                    <EyeClosed className="h-4 w-4 text-[#06202b]" />
                   ) : (
                     <Eye className="h-4 w-4 text-default-500" />
                   )}
@@ -260,7 +260,7 @@ export default function SignUpForm() {
           <div className="space-y-2">
             <label
               htmlFor="passwordConfirmation"
-              className="text-sm font-medium text-blue-950"
+              className="text-sm font-medium text-[#06202b]"
             >
               Confirm Password
             </label>
@@ -268,7 +268,7 @@ export default function SignUpForm() {
               id="passwordConfirmation"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="••••••••"
-              startContent={<Lock className="h-4 w-4 text-blue-950" />}
+              startContent={<Lock className="h-4 w-4 text-[#06202b]" />}
               endContent={
                 <Button
                   isIconOnly
@@ -278,7 +278,7 @@ export default function SignUpForm() {
                   type="button"
                 >
                   {showConfirmPassword ? (
-                    <EyeClosed className="h-4 w-4 text-blue-950" />
+                    <EyeClosed className="h-4 w-4 text-[#06202b]" />
                   ) : (
                     <Eye className="h-4 w-4 text-default-500" />
                   )}
@@ -294,7 +294,7 @@ export default function SignUpForm() {
           <div className="space-y-4">
             <div className="flex items-start gap-2">
               <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
-              <p className="text-sm text-blue-950 opacity-50">
+              <p className="text-sm text-[#06202b] opacity-50">
                 By signing up, you agree to our Terms of Service and Privacy
                 Policy
               </p>
@@ -304,7 +304,7 @@ export default function SignUpForm() {
           <Button
             type="submit"
             color="primary"
-            className="w-full bg-blue-950"
+            className="w-full bg-[#06202b]"
             isLoading={isSubmitting}
           >
             {isSubmitting ? "Creating account..." : "Create Account"}
@@ -312,14 +312,14 @@ export default function SignUpForm() {
         </form>
       </CardBody>
 
-      <Divider className="bg-blue-950" />
+      <Divider className="bg-[#06202b]" />
 
       <CardFooter className="flex justify-center py-4">
         <p className="text-sm text-default-600">
           Already have an account?{" "}
           <Link
             href="/sign-in"
-            className="hover:underline font-medium text-blue-950"
+            className="hover:underline font-medium text-[#06202b]"
           >
             Sign in
           </Link>

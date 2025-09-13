@@ -1,16 +1,15 @@
  
-// import { redirect } from "next/navigation";
+// // import { redirect } from "next/navigation";
 
-// import ProfileCard from "@/components/ProfileCard";
+// import { redirect } from "next/dist/server/api-utils";
+
+// // import ProfileCard from "@/components/ProfileCard";
 
 
-function ProfilePage() {
-  return (
-    <div>
-     {/* <ProfileCard/> */}
-     <h1>Hello</h1>
-    </div>
-  );
-}
+// function ProfilePage() {
+//   return (
+//      redirect("/dashboard/files")
+//   );
+// }
 
-export default ProfilePage;
+// export default ProfilePage;

@@ -138,8 +138,8 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
 
   return (
     <div className="flex">
-      <div className="bg-[#0F1B0F] w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-hidden  shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-b-8 border-[#0F1B0F]">
-        {loading && <LoadingSpinner label="Loading Files" />}
+      <div className="bg-[#F5EEDD] w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-hidden border-b-8 border-[#F5EEDD]  ">
+        {loading && <LoadingSpinner label="Loading Files" color="#06202B" />}
         <div className="sticky top-0 z-100 flex justify-center gap-3 align-center items-center">
           {" "}
           <FileTabs
@@ -170,8 +170,17 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
             ))}
           </div>
         ) : (
-          <div className="flex justify-center items-center h-full">
-            <FolderSearch size={100} color="white" />
+          <div
+            className="flex
+           justify-center items-center h-full
+           flex-col gap-2
+           "
+          >
+            <FolderSearch size={100} color="#06202B" />
+
+            <p className="text-[#06202B] text-xl font-semibold">
+              No Files Found
+            </p>
           </div>
         )}
       </div>
