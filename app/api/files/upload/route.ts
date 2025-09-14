@@ -151,10 +151,10 @@ export async function POST(request: NextRequest) {
     console.log("[API] Database insert result:", newFile);
 
     return NextResponse.json(newFile, { status: 201 });
-  } catch (error: any) {
-    console.error("[API] Upload error:", error.message, error.stack);
+  } catch (error:unknown) {
+    // console.error("[API] Upload error:");
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: "Upload Internal server error" },
       { status: 500 }
     );
   }
