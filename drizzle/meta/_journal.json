@@ -15,6 +15,13 @@
       "when": 1757084513067,
       "tag": "0001_tan_dagger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757859748886,
+      "tag": "0002_broad_charles_xavier",
+      "breakpoints": true
     }
   ]
 }

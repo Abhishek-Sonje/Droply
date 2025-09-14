@@ -19,7 +19,7 @@ export const files = pgTable("files", {
 
   //STORAGE INFO
   fileUrl: text("file_url").notNull(), // Url to access file
-  imagekitFileId: text("file_id").notNull(),
+  imagekitFileId: text("file_id"),
   thumbnailUrl: text("thumbnail_url"),
 
   //OWNERSHIP

@@ -53,15 +53,13 @@ export async function DELETE(
       );
     }
 
-
     db.transaction(async (tx) => {
       //Deleting file from imagekit
-      await imagekit.deleteFile(file.imagekitFileId);
+      await imagekit.deleteFile(file.imagekitFileId ?? "");
 
       //Deleting file from DB
       await tx.delete(files).where(eq(files.id, fileId));
     });
-
 
     return NextResponse.json(
       { message: "File deleted successfully" },

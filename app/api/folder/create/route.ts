@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
       size: 0,
 
       fileUrl: "",
+      imageKitFileId: null,
       thumbnailUrl: null,
 
       userId: userId,
@@ -69,5 +70,8 @@ export async function POST(request: NextRequest) {
       message: "Folder created successfully",
       folder: newFolder,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error creating folder:", error);
+    return NextResponse.json({ error: "Error creating folder" }, { status: 500 });
+  }
 }
