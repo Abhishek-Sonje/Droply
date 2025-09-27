@@ -153,8 +153,8 @@ export default function SignInForm() {
 
       <Divider className="bg-[#06202b]" />
 
-      <CardFooter className="flex justify-center py-4">
-        <p className="text-sm text-default-600">
+      <CardFooter className="flex flex-col ">
+        <p className="text-sm text-default-600 py-1">
           Don &#39; t have an account?{" "}
           <Link
             href="/sign-up"
@@ -163,6 +163,17 @@ export default function SignInForm() {
             Sign up
           </Link>
         </p>
+        <p className="text-sm text-default-600 py-1">
+          Forgot your password?{" "} 
+
+          <Link
+            href="/reset-password"
+            className=" hover:underline font-medium text-[#06202b]"
+          >
+            Reset
+          </Link>
+        </p>
+        
       </CardFooter>
     </Card>
   );
