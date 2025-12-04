@@ -1,26 +1,15 @@
 "use client";
 import { Cloud, ArrowRight, Shield, Zap, Globe } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 
 export default function DroplyHeroRedesign() {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white selection:bg-cyan-500/30 overflow-hidden font-sans relative">
+    <div className="h-screen bg-gradient-to-b from-black via-black to-slate-950 text-white selection:bg-cyan-500/30 overflow-hidden font-sans relative">
       {/* Background Effects */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
+      <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Grid Pattern */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
             backgroundSize: "50px 50px",
@@ -28,8 +17,8 @@ export default function DroplyHeroRedesign() {
         ></div>
 
         {/* Glowing Orbs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[120px] animate-pulse-slow"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow delay-1000"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px] animate-pulse-slow delay-1000"></div>
       </div>
 
       <style jsx>{`
@@ -74,13 +63,7 @@ export default function DroplyHeroRedesign() {
       `}</style>
 
       {/* Navigation */}
-      <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 border-b ${
-          isScrolled
-            ? "bg-[#0B0F19]/80 border-white/10 backdrop-blur-md py-4"
-            : "bg-transparent border-transparent py-6"
-        }`}
-      >
+      <nav className="absolute top-0 w-full z-50 bg-transparent border-b border-transparent py-6">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
             <div className="w-10 h-10 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
@@ -119,7 +102,7 @@ export default function DroplyHeroRedesign() {
       </nav>
 
       {/* Hero Content */}
-      <section className="relative z-10 pt-32 pb-20 lg:pt-48 lg:pb-32 px-6">
+      <section className="relative z-10 h-full flex items-center px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
           {/* Text Content */}
           <div className="max-w-2xl">
@@ -218,7 +201,7 @@ export default function DroplyHeroRedesign() {
             </div>
 
             {/* Floating Element 1 (Storage Card) */}
-            <div className="absolute -right-8 bottom-20 w-48 p-4 glass-card rounded-xl animate-float-sub z-30 bg-[#0B0F19]/60">
+            <div className="absolute -right-8 bottom-20 w-48 p-4 glass-card rounded-xl animate-float-sub z-30 bg-black/60">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-lg bg-green-500/20 text-green-400">
                   <Shield size={18} />
@@ -235,7 +218,7 @@ export default function DroplyHeroRedesign() {
 
             {/* Floating Element 2 (Upload Status) */}
             <div
-              className="absolute -left-8 top-32 w-56 p-4 glass-card rounded-xl animate-float-sub z-30 bg-[#0B0F19]/60"
+              className="absolute -left-8 top-32 w-56 p-4 glass-card rounded-xl animate-float-sub z-30 bg-black/60"
               style={{ animationDelay: "1s" }}
             >
               <div className="flex justify-between items-center mb-2">
