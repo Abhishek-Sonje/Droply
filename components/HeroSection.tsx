@@ -1,185 +1,116 @@
-"use client"
-import { CloudUpload } from "lucide-react";
+"use client";
+import { Cloud, ArrowRight, Shield, Zap, Globe } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-export default function DroplyHero() {
+export default function DroplyHeroRedesign() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5EEDD] overflow-hidden">
-      {/* Custom CSS for animations */}
+    <div className="min-h-screen bg-[#0B0F19] text-white selection:bg-cyan-500/30 overflow-hidden font-sans relative">
+      {/* Background Effects */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
+            backgroundSize: "50px 50px",
+          }}
+        ></div>
+
+        {/* Glowing Orbs */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow delay-1000"></div>
+      </div>
+
       <style jsx>{`
-        @keyframes float {
+        @keyframes float-y {
           0%,
           100% {
-            transform: translateY(0px);
+            transform: translateY(0px) perspective(1000px) rotateX(5deg)
+              rotateY(-5deg);
           }
           50% {
-            transform: translateY(-20px);
+            transform: translateY(-20px) perspective(1000px) rotateX(5deg)
+              rotateY(-5deg);
           }
         }
-
-        @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes slideInRight {
-          from {
-            opacity: 0;
-            transform: translateX(50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes expand {
-          from {
-            width: 0;
-          }
-          to {
-            width: 100%;
-          }
-        }
-
-        @keyframes cloudFloat {
+        @keyframes float-delayed {
           0%,
           100% {
-            transform: translateY(0px);
+            transform: translateY(0px) translateX(0px);
           }
           50% {
-            transform: translateY(-15px);
+            transform: translateY(-15px) translateX(5px);
           }
         }
-
-        @keyframes filesAppear {
-          from {
-            opacity: 0;
-            transform: translate(-50%, -30%) scale(0.5);
-          }
-          to {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-          }
+        .perspective-container {
+          perspective: 1000px;
         }
-
-        @keyframes fileBounce {
-          0%,
-          100% {
-            transform: translateY(0px) scale(1);
-          }
-          50% {
-            transform: translateY(-3px) scale(1.05);
-          }
+        .glass-card {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-
-        .float-bg {
-          animation: float 20s ease-in-out infinite;
+        .text-glow {
+          text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
         }
-
-        .slide-left {
-          animation: slideInLeft 1s ease-out;
+        .animate-float-main {
+          animation: float-y 6s ease-in-out infinite;
         }
-
-        .slide-right {
-          animation: slideInRight 1s ease-out;
-        }
-
-        .highlight::after {
-          content: "";
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 3px;
-          background: linear-gradient(90deg, #7ae2cf, #077a7d);
-          animation: expand 2s ease-out 0.5s both;
-        }
-
-        .cloud-main {
-          animation: cloudFloat 6s ease-in-out infinite;
-        }
-
-        .cloud-small-1 {
-          animation: cloudFloat 6s ease-in-out infinite;
-          animation-delay: -2s;
-        }
-
-        .cloud-small-2 {
-          animation: cloudFloat 6s ease-in-out infinite;
-          animation-delay: -4s;
-        }
-
-        .files-container {
-          animation: filesAppear 2s ease-out 1s both;
-        }
-
-        .file-bounce {
-          animation: fileBounce 3s ease-in-out infinite;
-        }
-
-        .file-bounce:nth-child(2) {
-          animation-delay: -0.5s;
-        }
-        .file-bounce:nth-child(3) {
-          animation-delay: -1s;
-        }
-        .file-bounce:nth-child(4) {
-          animation-delay: -1.5s;
-        }
-        .file-bounce:nth-child(5) {
-          animation-delay: -2s;
-        }
-        .file-bounce:nth-child(6) {
-          animation-delay: -2.5s;
+        .animate-float-sub {
+          animation: float-delayed 8s ease-in-out infinite;
         }
       `}</style>
 
       {/* Navigation */}
       <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        className={`fixed top-0 w-full z-50 transition-all duration-300 border-b ${
           isScrolled
-            ? "bg-[#F5EEDD]/98 backdrop-blur-lg shadow-lg shadow-[#06202B]/10"
-            : "bg-[#F5EEDD]/95 backdrop-blur-sm"
+            ? "bg-[#0B0F19]/80 border-white/10 backdrop-blur-md py-4"
+            : "bg-transparent border-transparent py-6"
         }`}
       >
-        <div className="w-full max-w-screen-2xl mx-auto flex justify-between items-center py-4 px-8 lg:px-16">
-          <a
-            href="#"
-            className="text-2xl font-bold text-[#077A7D] flex items-center gap-2 hover:scale-105 transition-transform duration-300"
-          >
-            <span className="text-2xl"><CloudUpload width={35} height={35} /></span>
-            Droply
-          </a>
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
+            <div className="w-10 h-10 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <Cloud className="text-white" size={20} fill="currentColor" />
+            </div>
+            <span>Droply</span>
+          </div>
 
-          <div className="flex gap-4 items-center">
+          <div className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+            <a href="#" className="hover:text-white transition-colors">
+              Features
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Enterprise
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Pricing
+            </a>
+          </div>
+
+          <div className="flex gap-4">
             <Link
               href="/sign-in"
-              className="px-6 py-3 text-[#077A7D] border-2 border-[#077A7D] rounded-full font-semibold hover:bg-[#077A7D] hover:text-white hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#077A7D]/30 transition-all duration-300"
+              className="hidden sm:block px-5 py-2.5 text-sm font-medium text-slate-300 hover:text-white transition-colors"
             >
-              Sign In
+              Log in
             </Link>
             <Link
               href="/sign-up"
-              className="px-6 py-3 bg-gradient-to-r from-[#7AE2CF] to-[#077A7D] text-white rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#7AE2CF]/40 transition-all duration-300"
+              className="px-5 py-2.5 text-sm font-medium bg-white text-slate-950 rounded-lg hover:bg-cyan-50 transition-all hover:scale-105 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)]"
             >
               Get Started
             </Link>
@@ -187,65 +118,140 @@ export default function DroplyHero() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center relative bg-gradient-to-br from-[#F5EEDD] to-[#7AE2CF]/10 overflow-hidden">
-        {/* Floating Background Element */}
-        <div className="absolute top-[-50%] right-[-20%] w-[60%] h-[200%] bg-gradient-to-br from-transparent to-[#7AE2CF]/10 transform -rotate-12 float-bg"></div>
+      {/* Hero Content */}
+      <section className="relative z-10 pt-32 pb-20 lg:pt-48 lg:pb-32 px-6">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+          {/* Text Content */}
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/30 border border-cyan-800/50 text-cyan-400 text-xs font-semibold mb-8">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+              </span>
+              v2.0 is now live
+            </div>
 
-        <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
-          {/* Hero Content */}
-          <div className="slide-left">
-            <h1 className="text-5xl lg:text-6xl font-extrabold text-[#06202B] mb-6 leading-tight">
-              Your files,{" "}
-              <span className="text-[#077A7D] relative highlight">
-                everywhere
+            <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
+              Infinite storage. <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-glow">
+                Zero compromise.
               </span>
             </h1>
 
-            <p className="text-xl text-[#06202B]/80 mb-10 leading-relaxed">
-              Store, sync, and share your files with ease. Droply gives you
-              secure cloud storage that works seamlessly across all your
-              devices.
+            <p className="text-lg text-slate-400 mb-10 leading-relaxed max-w-lg">
+              Secure, lightning-fast cloud storage designed for modern teams.
+              Sync your life across devices with end-to-end encryption built-in.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/sign-up"
-                className="px-8 py-4 bg-gradient-to-r from-[#7AE2CF] to-[#077A7D] text-white rounded-full font-semibold text-lg hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#7AE2CF]/40 transition-all duration-300"
+                className="group px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-semibold text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all hover:-translate-y-1 flex items-center justify-center gap-2"
               >
-                Start Free Trial
+                Start Uploading
+                <ArrowRight
+                  size={18}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </Link>
               <Link
-                href="/sign-in"
-                className="px-8 py-4 text-[#077A7D] border-2 border-[#077A7D] rounded-full font-semibold text-lg hover:bg-[#077A7D] hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-[#077A7D]/30 transition-all duration-300"
+                href="/demo"
+                className="px-8 py-4 rounded-xl font-semibold text-white border border-white/10 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
               >
-                Sign In
+                View Demo
               </Link>
+            </div>
+
+            <div className="mt-12 flex items-center gap-8 text-slate-500">
+              <div className="flex items-center gap-2">
+                <Shield size={18} className="text-cyan-500" />
+                <span className="text-sm">AES-256 Encrypted</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Zap size={18} className="text-cyan-500" />
+                <span className="text-sm">Lightning Sync</span>
+              </div>
             </div>
           </div>
 
-          {/* Hero Visual */}
-          <div className="flex justify-center items-center slide-right">
-            <div className="relative w-96 h-72">
-              {/* Main Cloud */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-28 bg-gradient-to-br from-[#7AE2CF] to-[#077A7D] rounded-full cloud-main shadow-2xl shadow-[#077A7D]/20"></div>
+          {/* Visual Content (3D Cards) */}
+          <div className="relative perspective-container hidden lg:block h-[500px]">
+            {/* Decorative Background Glow for Cards */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 to-purple-500/10 rounded-full blur-3xl transform translate-y-10"></div>
 
-              {/* Small Clouds */}
-              <div className="absolute top-[20%] left-[20%] w-20 h-12 bg-gradient-to-br from-[#7AE2CF] to-[#077A7D] rounded-full cloud-small-1 opacity-70"></div>
-              <div className="absolute top-[70%] right-[20%] w-14 h-8 bg-gradient-to-br from-[#7AE2CF] to-[#077A7D] rounded-full cloud-small-2 opacity-50"></div>
+            {/* Main Dashboard Card */}
+            <div className="absolute top-10 left-10 right-0 h-[400px] glass-card rounded-2xl p-6 transform rotate-y-[-10deg] animate-float-main z-20">
+              {/* Fake UI Header */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                </div>
+                <div className="h-2 w-20 bg-white/10 rounded-full"></div>
+              </div>
 
-              {/* Files */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 grid grid-cols-3 gap-2 files-container opacity-0">
+              {/* Fake UI Body */}
+              <div className="grid grid-cols-3 gap-4">
                 {[...Array(6)].map((_, i) => (
                   <div
                     key={i}
-                    className="w-6 h-7 bg-white rounded shadow-lg file-bounce relative"
+                    className="aspect-square rounded-xl bg-white/5 border border-white/5 flex flex-col items-center justify-center gap-3 hover:bg-white/10 transition-colors"
                   >
-                    {/* File Content Lines */}
-                    <div className="absolute top-1 left-1 right-1 h-0.5 bg-[#7AE2CF] rounded"></div>
-                    <div className="absolute top-2 left-1 right-2 h-px bg-[#06202B]/20 rounded"></div>
+                    <div
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        i === 0
+                          ? "bg-blue-500/20 text-blue-400"
+                          : i === 1
+                            ? "bg-purple-500/20 text-purple-400"
+                            : i === 2
+                              ? "bg-orange-500/20 text-orange-400"
+                              : "bg-slate-500/20 text-slate-400"
+                      }`}
+                    >
+                      <Cloud size={20} />
+                    </div>
+                    <div className="h-1.5 w-12 bg-white/10 rounded-full"></div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Floating Element 1 (Storage Card) */}
+            <div className="absolute -right-8 bottom-20 w-48 p-4 glass-card rounded-xl animate-float-sub z-30 bg-[#0B0F19]/60">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-green-500/20 text-green-400">
+                  <Shield size={18} />
+                </div>
+                <div>
+                  <div className="text-xs text-slate-400">Security</div>
+                  <div className="text-sm font-bold">Verified</div>
+                </div>
+              </div>
+              <div className="h-1 w-full bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-full w-[80%] bg-green-500"></div>
+              </div>
+            </div>
+
+            {/* Floating Element 2 (Upload Status) */}
+            <div
+              className="absolute -left-8 top-32 w-56 p-4 glass-card rounded-xl animate-float-sub z-30 bg-[#0B0F19]/60"
+              style={{ animationDelay: "1s" }}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs text-slate-400">Syncing files...</span>
+                <span className="text-xs text-cyan-400">84%</span>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded bg-blue-500/20 flex items-center justify-center text-blue-400">
+                    <Globe size={14} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="h-1.5 w-20 bg-white/20 rounded-full mb-1"></div>
+                    <div className="h-1 w-12 bg-white/10 rounded-full"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
