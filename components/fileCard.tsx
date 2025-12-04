@@ -10,7 +10,7 @@ import {
   Divider,
   addToast,
 } from "@heroui/react";
-import { Star, Download, Trash, Info } from "lucide-react";
+import { Star, Download, Trash, Info, ArchiveRestore } from "lucide-react";
 import { useState, useCallback } from "react";
 import { File } from "@/lib/db/schema";
 import axios from "axios";
@@ -18,8 +18,9 @@ import axios from "axios";
 interface FileCardProps {
   item: File;
   handleOpen: () => void;
-    handleStar: () => void;
-    handleTrash: () => void;
+  handleStar: () => void;
+  handleTrash: () => void;
+  handleDelete: () => void;
 }
 
 // Custom debounce function
@@ -35,7 +36,13 @@ const debounce = <T extends (...args: unknown[]) => unknown>(
 };
 
 // Individual card component with popover on info icon
-const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) => {
+const FileCard = ({
+  item,
+  handleOpen,
+  handleStar,
+  handleTrash,
+  handleDelete,
+}: FileCardProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   // Debounce hover handlers
@@ -133,34 +140,49 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
       </b>
       {/* <Divider className="m-3"/> */}
       <CardFooter className="flex justify-evenly">
-        <Button
-          isIconOnly
-          size="sm"
-          className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
-          onClick={handleStar}
-        >
-          {item.isStarred ? (
-            <Star size={19} color="orange" fill="gold" className="" />
-          ) : (
-            <Star size={19} />
-          )}
-        </Button>
-        <Button
-          className="bg-[#0F1B0F]  text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
-          isIconOnly
-          size="sm"
-          onClick={() => handleDownload(item.fileUrl, item.name)}
-        >
-          <Download size={19} />
-        </Button>
+        {!item.isTrash && (
+          <Button
+            isIconOnly
+            size="sm"
+            className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
+            onClick={handleStar}
+          >
+            {item.isStarred ? (
+              <Star size={19} color="orange" fill="gold" className="" />
+            ) : (
+              <Star size={19} />
+            )}
+          </Button>
+        )}
+        {!item.isTrash && (
+          <Button
+            className="bg-[#0F1B0F]  text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
+            isIconOnly
+            size="sm"
+            onClick={() => handleDownload(item.fileUrl, item.name)}
+          >
+            <Download size={19} />
+          </Button>
+        )}
         <Button
           isIconOnly
           size="sm"
           onClick={handleTrash}
           className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
         >
-          <Trash size={19} />
+          {item.isTrash ? <ArchiveRestore size={19} /> : <Trash size={19} />}
         </Button>
+        {item.isTrash && (
+          <Button
+            isIconOnly
+            size="sm"
+            onClick={handleDelete}
+            className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
+          >
+            <Trash size={19} />
+          </Button>
+        )}
+
         {/* Popover triggered by Info icon */}
         <Popover
           key={item.id}
@@ -180,7 +202,6 @@ const FileCard = ({ item, handleOpen, handleStar ,handleTrash }: FileCardProps) 
               size="sm"
               onMouseEnter={debouncedOpen}
               onMouseLeave={debouncedClose}
-              
               className="bg-[#0F1B0F]  text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
             >
               <Info size={19} />

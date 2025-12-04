@@ -136,6 +136,30 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
     }
   };
 
+   const handleDelete = async (fileId: string) => {
+    try {
+      await axios.delete(`/api/files/${fileId}/delete`);
+      setFiles(
+        files.filter((file) => {
+          return file.id !== fileId;
+        })
+      );
+
+      addToast({
+        title: "Deleted File",
+        description: "File deleted successfully",
+        color: "success",
+      });
+    } catch (error) {
+      console.log("Error deleting file:", error);
+      addToast({
+        title: "Action Failed",
+        description: "We could'nt delete the file,please try again",
+        color: "danger",
+      });
+    }
+  };
+ 
   return (
     <div className="flex">
       <div className="bg-[#F5EEDD] w-3xl px-7 rounded-2xl min-h-96 max-h-[480px] overflow-hidden border-b-8 border-[#F5EEDD]  ">
@@ -166,6 +190,7 @@ function FilesList({ userId, refreshTrigger = 0 }: fileListProps) {
                 handleOpen={() => handleOpen(item.fileUrl)}
                 handleStar={() => handleStar(item.id)}
                 handleTrash={() => handleTrash(item.id)}
+                handleDelete={()=>handleDelete(item.id)}
               />
             ))}
           </div>

@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 import { ImageKitProvider } from "imagekitio-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+ 
 
 const authenticator = async () => {
   try {
@@ -32,8 +33,10 @@ export function Providers({ children, themeProp }: providerProps) {
         publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ""}
         urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ""}
       >
+        
         <HeroUIProvider>{children} </HeroUIProvider>
-        <ToastProvider/>
+
+        <ToastProvider />
         <ToastContainer />
       </ImageKitProvider>
     </QueryClientProvider>
