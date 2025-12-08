@@ -10,7 +10,7 @@ import {
   Divider,
   addToast,
 } from "@heroui/react";
-import { Star, Download, Trash, Info, ArchiveRestore } from "lucide-react";
+import { Star, Download, Trash, Info, ArchiveRestore, Folder, Files, File as FileIcon } from "lucide-react";
 import { useState, useCallback } from "react";
 import { File } from "@/lib/db/schema";
 import axios from "axios";
@@ -21,6 +21,7 @@ interface FileCardProps {
   handleStar: () => void;
   handleTrash: () => void;
   handleDelete: () => void;
+  viewMode?: "grid" | "list";
 }
 
 // Custom debounce function
@@ -42,6 +43,7 @@ const FileCard = ({
   handleStar,
   handleTrash,
   handleDelete,
+  viewMode = "grid",
 }: FileCardProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
@@ -113,122 +115,276 @@ const FileCard = ({
     }
   };
 
+  // List view rendering
+  if (viewMode === "list") {
+    return (
+      <div className="w-full bg-slate-800 border border-slate-700 hover:border-sky-500/50 transition-all duration-200 group rounded-lg overflow-hidden">
+        <div className="flex items-center gap-4 p-3">
+          {/* Thumbnail */}
+          <div 
+            className="w-12 h-12 flex-shrink-0 rounded overflow-hidden bg-slate-900 cursor-pointer"
+            onClick={handleOpen}
+          >
+            {item.isFolder ? (
+              <div className="w-full h-full flex items-center justify-center text-sky-500">
+                <Folder size={24} fill="currentColor" />
+              </div>
+            ) : (
+              <Image
+                alt={item.name}
+                className="w-full h-full object-cover"
+                radius="none"
+                src={item.type.startsWith("image/") ? item.fileUrl : "/pdf.png"}
+                loading="lazy"
+              />
+            )}
+          </div>
+
+          {/* File Info */}
+          <div className="flex-1 min-w-0 cursor-pointer" onClick={handleOpen}>
+            <div className="flex items-center gap-2">
+              {item.isFolder ? (
+                <Folder size={14} className="text-sky-500 flex-shrink-0" fill="currentColor"/>
+              ) : (
+                <FileIcon size={14} className="text-sky-500 flex-shrink-0" fill="currentColor"/>
+              )}
+              <p className="text-sm font-medium text-slate-200 truncate" title={item.name}>
+                {item.name}
+              </p>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {(item.size / 1024 / 1024).toFixed(2)} MB • {new Date(item.createdAt).toLocaleDateString()}
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {!item.isTrash ? (
+              <>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className={`hover:bg-slate-700 ${item.isStarred ? "text-yellow-400" : "text-slate-400 hover:text-yellow-400"}`}
+                  onClick={handleStar}
+                >
+                  <Star size={16} fill={item.isStarred ? "currentColor" : "none"} />
+                </Button>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="text-slate-400 hover:text-sky-400 hover:bg-slate-700"
+                  onClick={() => handleDownload(item.fileUrl, item.name)}
+                >
+                  <Download size={16} />
+                </Button>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="text-slate-400 hover:text-red-400 hover:bg-slate-700"
+                  onClick={handleTrash}
+                >
+                  <Trash size={16} />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="text-slate-400 hover:text-green-400 hover:bg-slate-700"
+                  onClick={handleTrash}
+                >
+                  <ArchiveRestore size={16} />
+                </Button>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="text-red-400 hover:text-red-300 hover:bg-slate-700"
+                  onClick={handleDelete}
+                >
+                  <Trash size={16} />
+                </Button>
+              </>
+            )}
+
+            {/* Info Popover */}
+            <Popover
+              isOpen={isPopoverOpen}
+              onOpenChange={setIsPopoverOpen}
+              placement="left"
+              showArrow
+              classNames={{
+                content: "bg-slate-800 border-slate-700 text-slate-300"
+              }}
+            >
+              <PopoverTrigger>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  onMouseEnter={debouncedOpen}
+                  onMouseLeave={debouncedClose}
+                  className="text-slate-500 hover:text-sky-400 hover:bg-slate-700"
+                >
+                  <Info size={16} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3">
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm font-bold text-slate-100 truncate">{item.name}</p>
+                  <div className="grid grid-cols-2 gap-y-1 text-xs text-slate-400">
+                    <span>Size:</span> <span className="text-slate-300 text-right">{(item.size / 1024 / 1024).toFixed(2)} MB</span>
+                    <span>Type:</span> <span className="text-slate-300 text-right truncate">{item.type}</span>
+                    <span>Created:</span> <span className="text-slate-300 text-right">{new Date(item.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Grid view rendering (default)
   return (
     <Card
-      shadow="md"
-      className="p-1 pt-2 w-full bg-[#06202B] min-h-[100px] max-h-[250px] rounded-2xl  border-2 border-[#7Ae3cf]  "
+      shadow="sm"
+      className="w-full bg-slate-800 border border-slate-700 hover:border-sky-500/50 transition-all duration-200 group relative"
     >
       <CardBody
-        className="p-0  flex justify-center overflow-hidden rounded-2xl bg-white "
+        className="p-0 overflow-hidden bg-slate-900 relative aspect-[4/3]"
         onClick={handleOpen}
       >
-        <Image
-          alt={item.name}
-          className="w-full object-cover overflow-hidden  hover:cursor-pointer  "
-          radius="lg"
-          shadow="sm"
-          src={item.type.startsWith("image/") ? item.fileUrl : "/pdf.png"}
-          isZoomed // Optional zoom effect; remove if not needed
-          loading="lazy" // Lazy load images
-        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+        
+        {item.isFolder ? (
+           <div className="w-full h-full flex items-center justify-center bg-slate-800/50 group-hover:bg-slate-800 transition-colors cursor-pointer text-sky-500">
+              <Folder size={64} fill="currentColor" className="opacity-80 group-hover:opacity-100" />
+           </div>
+        ) : (
+          <Image
+            alt={item.name}
+            className="w-full h-full object-cover"
+            radius="none"
+            src={item.type.startsWith("image/") ? item.fileUrl : "/pdf.png"}
+            loading="lazy"
+          />
+        )}
       </CardBody>
-      <Divider className="mt-4 bg-[#07797dab]" />
-      <b className="text-800 pt-2 px-2 text-[#ffffff]">
-        {item.name.split(".")[0].length > 20
-          ? item.name.split(".")[0].slice(0, 10) + "..."
-          : item.name.split(".")[0]}
-      </b>
-      {/* <Divider className="m-3"/> */}
-      <CardFooter className="flex justify-evenly">
-        {!item.isTrash && (
-          <Button
-            isIconOnly
-            size="sm"
-            className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
-            onClick={handleStar}
-          >
-            {item.isStarred ? (
-              <Star size={19} color="orange" fill="gold" className="" />
-            ) : (
-              <Star size={19} />
-            )}
-          </Button>
-        )}
-        {!item.isTrash && (
-          <Button
-            className="bg-[#0F1B0F]  text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
-            isIconOnly
-            size="sm"
-            onClick={() => handleDownload(item.fileUrl, item.name)}
-          >
-            <Download size={19} />
-          </Button>
-        )}
-        <Button
-          isIconOnly
-          size="sm"
-          onClick={handleTrash}
-          className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
-        >
-          {item.isTrash ? <ArchiveRestore size={19} /> : <Trash size={19} />}
-        </Button>
-        {item.isTrash && (
-          <Button
-            isIconOnly
-            size="sm"
-            onClick={handleDelete}
-            className="bg-[#0F1B0F] text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
-          >
-            <Trash size={19} />
-          </Button>
-        )}
+      
+      <div className="p-3">
+          <div className="flex items-center gap-2 mb-2">
+             {item.isFolder ? (
+                <Folder size={16} className="text-sky-500 flex-shrink-0"  /> 
+             ) : (
+                // <div className="w-4 h-4 rounded bg-slate-700 flex-shrink-0" /> // Placeholder for file type icon
+                <FileIcon size={16} className="text-sky-500 flex-shrink-0"  /> 
+             )}
+             <p className="text-sm font-medium text-slate-200 truncate flex-1" title={item.name}>
+                {item.name}
+             </p>
+          </div>
 
-        {/* Popover triggered by Info icon */}
-        <Popover
-          key={item.id}
-          isOpen={isPopoverOpen}
-          onOpenChange={setIsPopoverOpen}
-          placement="right"
-          motionProps={{
-            variants: {
-              enter: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
-              exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } },
-            },
-          }}
-        >
-          <PopoverTrigger>
-            <Button
-              isIconOnly
-              size="sm"
-              onMouseEnter={debouncedOpen}
-              onMouseLeave={debouncedClose}
-              className="bg-[#0F1B0F]  text-[#7ae3cf] hover:bg-[#7ae3cf] hover:text-[#06202B]"
+          <Divider className="bg-slate-700/50 my-2" />
+
+          <CardFooter className="p-0 flex justify-between gap-1">
+            {!item.isTrash ? (
+              <>
+                 <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    className={`hover:bg-slate-700 ${item.isStarred ? "text-yellow-400" : "text-slate-400 hover:text-yellow-400"}`}
+                    onClick={handleStar}
+                >
+                    <Star size={18} fill={item.isStarred ? "currentColor" : "none"} />
+                </Button>
+                <div className="flex gap-1">
+                    <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="text-slate-400 hover:text-sky-400 hover:bg-slate-700"
+                        onClick={() => handleDownload(item.fileUrl, item.name)}
+                    >
+                        <Download size={18} />
+                    </Button>
+                    <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="text-slate-400 hover:text-red-400 hover:bg-slate-700"
+                        onClick={handleTrash}
+                    >
+                        <Trash size={18} />
+                    </Button>
+                </div>
+              </>
+            ) : (
+                <div className="flex w-full justify-end gap-2">
+                    <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="text-slate-400 hover:text-green-400 hover:bg-slate-700"
+                        // Restore functionality not implemented yet, using trash for now implies restore context usually or just restore button needed
+                        onClick={handleTrash} 
+                    >
+                        <ArchiveRestore size={18} />
+                    </Button>
+                    <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="text-red-400 hover:text-red-300 hover:bg-slate-700"
+                        onClick={handleDelete}
+                    >
+                        <Trash size={18} />
+                    </Button>
+                </div>
+            )}
+
+            {/* Popover triggered by Info icon - simplified for new design */}
+            <Popover
+              isOpen={isPopoverOpen}
+              onOpenChange={setIsPopoverOpen}
+              placement="top"
+              showArrow
+              classNames={{
+                content: "bg-slate-800 border-slate-700 text-slate-300"
+              }}
             >
-              <Info size={19} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            onMouseEnter={debouncedOpen}
-            onMouseLeave={debouncedClose}
-          >
-            <div className="px-1 py-2">
-              <div className="text-small font-bold">{item.name}</div>
-              <div className="text-tiny">
-                <ul>
-                  <li className="text-tiny">Size: {item.size / 1000000} MB</li>
-                  <li className="text-tiny">File Type: {item.type}</li>
-                  <li className="text-tiny">
-                    Uploaded: {new Date(item.createdAt).toDateString()}
-                  </li>
-                  <li className="text-tiny">
-                    Modified: {new Date(item.updatedAt).toDateString()}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </CardFooter>
+              <PopoverTrigger>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  onMouseEnter={debouncedOpen}
+                  onMouseLeave={debouncedClose}
+                  className="text-slate-500 hover:text-sky-400 hover:bg-slate-700"
+                >
+                  <Info size={18} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3">
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm font-bold text-slate-100 truncate">{item.name}</p>
+                  <div className="grid grid-cols-2 gap-y-1 text-xs text-slate-400">
+                      <span>Size:</span> <span className="text-slate-300 text-right">{(item.size / 1024 / 1024).toFixed(2)} MB</span>
+                      <span>Type:</span> <span className="text-slate-300 text-right truncate">{item.type}</span>
+                      <span>Created:</span> <span className="text-slate-300 text-right">{new Date(item.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </CardFooter>
+      </div>
     </Card>
   );
 };
