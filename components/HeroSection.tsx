@@ -66,23 +66,12 @@ export default function DroplyHeroRedesign() {
       <nav className="absolute top-0 w-full z-50 bg-transparent border-b border-transparent py-6">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-10 h-10 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Cloud className="text-white" size={20} fill="currentColor" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center ">
+              <Cloud className="text-white" size={25}   />
             </div>
             <span>Droply</span>
           </div>
-
-          <div className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
-            <a href="#" className="hover:text-white transition-colors">
-              Features
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Enterprise
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Pricing
-            </a>
-          </div>
+ 
 
           <div className="flex gap-4">
             <Link

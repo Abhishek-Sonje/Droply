@@ -10,6 +10,7 @@ import FileCard from "./fileCard";
 import FolderModal from "./FolderModal";
 
 import LoadingSpinner from "./loading";
+import { useRefresh } from "@/contexts/RefreshContext";
 
 interface fileListProps {
   userId: string;
@@ -18,6 +19,7 @@ interface fileListProps {
 function FilesList({ userId }: fileListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshTrigger } = useRefresh();
   
   const currentFolderId = searchParams.get("folder");
   const tabParam = searchParams.get("tab");
@@ -77,7 +79,7 @@ function FilesList({ userId }: fileListProps) {
 
   useEffect(() => {
     fetchFiles();
-  }, [userId, fetchFiles]); 
+  }, [userId, fetchFiles, refreshTrigger]); 
 
   // Handle Folder Navigation
   const handleFolderClick = (folder: FileType) => {
@@ -256,7 +258,7 @@ function FilesList({ userId }: fileListProps) {
         {/* File Content */}
         <div className="flex-1 pb-20">
             {processedFiles && processedFiles.length > 0 ? (
-                <div className={`gap-4 grid ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" : "grid-cols-1"}`}>
+                <div className={`gap-4 ${viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" : "flex flex-col"}`}>
                     {processedFiles.map((item) => (
                     <FileCard
                         key={item.id}
@@ -265,6 +267,7 @@ function FilesList({ userId }: fileListProps) {
                         handleStar={() => handleStar(item.id)}
                         handleTrash={() => handleTrash(item.id)}
                         handleDelete={()=>handleDelete(item.id)}
+                        viewMode={viewMode}
                     />
                     ))}
                 </div>

@@ -18,6 +18,7 @@ import { useUser } from "@clerk/clerk-react";
 
 import UploadModal from "./UploadModal";
 import { useState } from "react";
+import { useRefresh } from "@/contexts/RefreshContext";
 
 export default function Sidebar() {
       const pathname = usePathname();
@@ -26,6 +27,7 @@ export default function Sidebar() {
   const { signOut } = useClerk();
   const { user } = useUser();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const { triggerRefresh } = useRefresh();
 
   const menuItems = [
     { name: "My Files", icon: LayoutGrid, path: "/dashboard/files", tab:"files", id: "files" },
@@ -59,12 +61,8 @@ export default function Sidebar() {
             isOpen={isUploadOpen} 
             onOpenChange={setIsUploadOpen} 
             onUploadComplete={() => {
-                // Ideally refresh the file list here, but list is in another component.
-                // Since we rely on global state / URL / SWR, a simple refresh might be needed
-                // For now, let's just close. The user might need to manually refresh or we use a context trigger.
-                // Actually, DashboardContent has a refreshTrigger. 
-                // We can use a simple hack: router.refresh()
-                router.refresh();
+                // Trigger file list refresh
+                triggerRefresh();
                 setIsUploadOpen(false);
             }} 
         />
