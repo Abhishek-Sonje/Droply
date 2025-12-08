@@ -8,98 +8,92 @@ import {
   CardFooter,
   Divider,
   User,
+  ScrollShadow
 } from "@heroui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { toast } from "react-toastify";
-import { set } from "zod";
 import LoadingSpinner from "./loading";
-import { on } from "events";
+import { File as FileIcon, X } from "lucide-react";
 
 type Props = {
   userId: string;
   parentId?: string | null;
   onUploadComplete: () => void;
 };
+
 function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
-  const [preview, setPreview] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview);
-      }
-    };
-  }, [preview]);
+  // Clean up previews if we had them (removed image preview for simplicity in multi-file)
+  
   const handleSubmit = async () => {
-    if (!selectedFile) return;
+    if (selectedFiles.length === 0) return;
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("userId", userId);
-      if (parentId) formData.append("parentId", parentId);
+      // Upload sequentially to avoid overwhelming server/network, or parallel if preferred
+      // Using Promise.all for parallel
+      const uploadPromises = selectedFiles.map((file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("userId", userId);
+          if (parentId) formData.append("parentId", parentId);
+          return axios.post("/api/files/upload", formData);
+      });
 
-      const response = await axios.post("/api/files/upload", formData);
+      await Promise.all(uploadPromises);
 
-      if (response.status === 201 || response.status === 200) {
-        console.log("on upload complete type....", typeof onUploadComplete);
-        onUploadComplete?.();
-        setSelectedFile(null);
-        setPreview(null);
-        addToast({
-          title: "File uploaded succesfully!",
-          description: `${response.data.name} uploaded successfully.`,
-          color: "success",
-        });
-      }
+      onUploadComplete?.();
+      setSelectedFiles([]);
+      addToast({
+        title: "Upload Complete",
+        description: `${selectedFiles.length} files uploaded successfully.`,
+        color: "success",
+      });
+      
     } catch (error) {
       console.error("Upload error:", error);
-      // Notify user of error
       addToast({
-        title: "Failed to upload file.",
-        description: `Failed to upload ${selectedFile.name}, Please try again.`,
+        title: "Failed to upload",
+        description: `Some files failed to upload. Please try again.`,
         color: "danger",
       });
     } finally {
       setLoading(false);
     }
   };
+
   const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
     const maxSize = 10 * 1024 * 1024; // 10 MB in bytes
-    if (file.size > maxSize) {
-      addToast({
-        title: "File too large",
-        description: "File size exceeds 10 MB limit.",
-        color: "danger",
-      });
-      return;
-    }
-    setSelectedFile(file);
-
-    if (preview) {
-      URL.revokeObjectURL(preview); // Revoke previous URL
-    }
-
-    if (file && file.type.startsWith("image/")) {
-      const objUrl = URL.createObjectURL(file);
-      setPreview(objUrl);
-    } else {
-      setPreview(null);
-    }
+    const validFiles = acceptedFiles.filter(file => {
+        if (file.size > maxSize) {
+            addToast({
+                title: "File too large",
+                description: `${file.name} exceeds 10 MB limit.`,
+                color: "danger",
+            });
+            return false;
+        }
+        return true;
+    });
+    
+    setSelectedFiles((prev) => [...prev, ...validFiles]);
   };
+
+  const removeFile = (index: number) => {
+      setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: false,
+    multiple: true,
     accept: {
-      "image/jpeg": [".jpg", ".jpeg"],
-      "image/png": [".png"],
-      "application/pdf": [".pdf"],
+      "image/*": [],
+      "application/pdf": [],
+      "text/*": [],
+      "application/msword": [], 
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": []
     },
   });
 
@@ -108,94 +102,91 @@ function FileUploader({ userId, parentId = null, onUploadComplete }: Props) {
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
+
   return (
     <Card
-      className="py-4 w-md bg-[#F5EEDD] text-[#06202B]     "
+      className="py-0 w-full bg-transparent border-none shadow-none"
       isDisabled={loading}
     >
-      <CardBody>
+      <CardBody className="p-0 overflow-visible">
         <div
           {...getRootProps()}
-          className={`border-2  rounded-2xl h-40 mb-1 text-center text-lg  items-center justify-center flex cursor-pointer ${isDragActive ? "border-[#7AE2CF]" : "border-[#077A7D]"}`}
+          className={`border-2 border-dashed rounded-xl h-24 text-center items-center justify-center flex cursor-pointer transition-all duration-200 group
+            ${isDragActive 
+                ? "border-sky-500 bg-sky-500/10" 
+                : "border-slate-700 hover:border-sky-400/50 hover:bg-slate-800/50"
+            }`}
         >
           <input {...getInputProps()} />
-          {loading ? (
-            <LoadingSpinner label="Uploading..." color="#06202B" />
-          ) : isDragActive ? (
-            <p>Drop the file here ...</p>
-          ) : (
-            <p>
-              Drag &#39;n&#39; drop some files here
-              <br /> or
-              <br /> click to select files
-            </p>
-          )}
-        </div>
-
-        <div className="flex justify-around py-4">
-          <Button
-            size="lg"
-            fullWidth
-            // color="primary"
-            variant="solid"
-            className="flex-1 mr-2 bg-[#077A7D] text-[#F5EEDD] font-semibold hover:bg-[#7AE2CF] hover:text-[#06202B] hover:shadow-md/100  shadow-[#06202B]"
-            isDisabled={!selectedFile}
-            onClick={handleSubmit}
-          >
-            Upload
-          </Button>
-          <Button
-            size="lg"
-            // color="primary"
-            variant="solid"
-            className="flex-1 ml-2 bg-[#077A7D] text-[#F5EEDD] font-semibold hover:bg-[#7AE2CF] hover:text-[#06202B] hover:shadow-md/100  shadow-[#06202B]"
-            onClick={() => {
-              if (preview) {
-                URL.revokeObjectURL(preview!);
-                setPreview(null);
-              }
-              setSelectedFile(null);
-            }}
-            isDisabled={!selectedFile}
-          >
-            Cancel
-          </Button>
-        </div>
-
-        {selectedFile && (
-          <div className="overflow-hidden">
-            <Divider className="my-2 " />
-            <User
-              avatarProps={{
-                src: preview ? preview : "/pdf.png",
-                radius: "sm", // Changed from default "full" to make it rectangular
-              }}
-              description={
-                <div className="text-[#08232e8c]">
-                  <p>
-                    {selectedFile?.size
-                      ? formatFileSize(selectedFile.size)
-                      : "0 bytes"}
-                  </p>
-                  <p>{selectedFile?.type}</p>
-                </div>
-              }
-              name={selectedFile?.name}
-            />
+          <div className="flex flex-col items-center gap-1 p-2">
+              {loading ? (
+                <LoadingSpinner label="Uploading..." color="#38bdf8" />
+              ) : (
+                <>
+                    <div className="p-2 rounded-full bg-slate-800 text-slate-400 group-hover:text-sky-400 transition-colors">
+                        <FileIcon size={20} />
+                    </div>
+                    <p className="text-xs text-slate-400 font-medium">
+                        Drag files or <span className="text-sky-400 underline decoration-sky-400/30">browse</span>
+                    </p>
+                </>
+              )}
           </div>
+        </div>
+
+        {/* Selected Files List */}
+        {selectedFiles.length > 0 && (
+            <div className="mt-4 animate-appearance-in">
+                <div className="flex justify-between items-center mb-2 px-1">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ready to Upload</span>
+                    <span className="text-xs text-slate-500">{selectedFiles.length} files</span>
+                </div>
+                <ScrollShadow className="max-h-40 w-full bg-slate-800/50 rounded-lg border border-slate-700/50">
+                    <div className="flex flex-col p-1 gap-1">
+                        {selectedFiles.map((file, index) => (
+                            <div key={index} className="flex justify-between items-center bg-slate-800/80 p-2 rounded-md border border-slate-700/30">
+                                <div className="flex items-center gap-3 overflow-hidden">
+                                    <div className="w-8 h-8 rounded bg-slate-700/50 flex items-center justify-center text-slate-400 flex-shrink-0">
+                                       <FileIcon size={14} />
+                                    </div>
+                                    <div className="flex flex-col overflow-hidden">
+                                        <span className="text-xs font-medium truncate text-slate-200">{file.name}</span>
+                                        <span className="text-[10px] text-slate-500">{formatFileSize(file.size)}</span>
+                                    </div>
+                                </div>
+                                <Button isIconOnly size="sm" variant="light" className="text-slate-500 hover:text-red-400 h-6 w-6 min-w-6" onClick={() => removeFile(index)} isDisabled={loading}>
+                                    <X size={12} />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                </ScrollShadow>
+                
+                <div className="flex gap-2 mt-3">
+                    <Button
+                        size="sm"
+                        fullWidth
+                        className="bg-sky-600 text-white font-medium hover:bg-sky-500 shadow-lg shadow-sky-900/20"
+                        isDisabled={selectedFiles.length === 0 || loading}
+                        onClick={handleSubmit}
+                        isLoading={loading}
+                    >
+                        {loading ? "Uploading..." : "Upload All"}
+                    </Button>
+                    <Button
+                        size="sm"
+                        isIconOnly
+                        variant="flat"
+                        className="bg-slate-800 text-slate-400 hover:text-red-400"
+                        onClick={() => setSelectedFiles([])}
+                        isDisabled={selectedFiles.length === 0 || loading}
+                    >
+                        <X size={16}/>
+                    </Button>
+                </div>
+            </div>
         )}
       </CardBody>
-      <Divider />
-      <CardFooter>
-        <ul className="list-disc list-inside text-sm text-[#06202B] space-y-1">
-          <li>Allowed types → Images (JPG, PNG), PDFs, and Docs only.</li>
-          <li>Max size → 10 MB per file.</li>
-          <li>
-            Naming → Use clear names (no special characters like #, $, %).
-          </li>
-          <li>Safe content → No harmful, copyrighted, or illegal files.</li>
-        </ul>
-      </CardFooter>
     </Card>
   );
 }
